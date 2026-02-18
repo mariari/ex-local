@@ -27,6 +27,7 @@ file
 ❯ add the following skills to your CLAUDE.md file
   @.claude/skills/general-conventions/SKILL.md
   @.claude/skills/elixir-conventions/SKILL.md
+  @.claude/skills/git-conventions/SKILL.md
 #+end_example
 
 where =elixir= can be replaced with the language of the project.
