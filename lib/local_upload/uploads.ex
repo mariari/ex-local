@@ -24,7 +24,7 @@ defmodule LocalUpload.Uploads do
   def store_file(%Plug.Upload{} = plug_upload, uploader \\ "anonymous") do
     hash = compute_hash(plug_upload.path)
 
-    case Repo.get_by(Upload, hash: hash) do
+    case Upload |> where(hash: ^hash) |> limit(1) |> Repo.one() do
       %Upload{} = existing ->
         {:ok, existing}
 
