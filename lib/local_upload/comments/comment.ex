@@ -9,10 +9,10 @@ defmodule LocalUpload.Comments.Comment do
 
   @type t :: %__MODULE__{
           id: integer() | nil,
-          body: String.t(),
+          body: String.t() | nil,
           author_name: String.t(),
-          ip_hash: String.t(),
-          upload_id: integer(),
+          ip_hash: String.t() | nil,
+          upload_id: integer() | nil,
           upload:
             LocalUpload.Uploads.Upload.t()
             | Ecto.Association.NotLoaded.t(),

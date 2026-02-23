@@ -39,6 +39,7 @@ defmodule LocalUpload.Application do
     :ok
   end
 
+  @spec skip_migrations?() :: boolean()
   defp skip_migrations?() do
     # By default, sqlite migrations are run when using a release
     System.get_env("RELEASE_NAME") == nil

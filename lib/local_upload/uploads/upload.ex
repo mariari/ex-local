@@ -6,11 +6,11 @@ defmodule LocalUpload.Uploads.Upload do
 
   @type t :: %__MODULE__{
           id: integer() | nil,
-          original_name: String.t(),
-          stored_name: String.t(),
-          hash: String.t(),
-          size: integer(),
-          content_type: String.t(),
+          original_name: String.t() | nil,
+          stored_name: String.t() | nil,
+          hash: String.t() | nil,
+          size: integer() | nil,
+          content_type: String.t() | nil,
           uploader: String.t(),
           vote_count: integer(),
           comments:

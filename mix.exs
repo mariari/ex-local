@@ -21,7 +21,7 @@ defmodule LocalUpload.MixProject do
   def application do
     [
       mod: {LocalUpload.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :ex_unit]
     ]
   end
 
@@ -64,7 +64,8 @@ defmodule LocalUpload.MixProject do
       {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.5"},
       {:typedstruct, "~> 0.5"},
-      {:ex_example, git: "https://github.com/anoma/ex_example", branch: "mariari/v0.1.0-rc3"}
+      {:ex_example, git: "https://github.com/anoma/ex_example", branch: "mariari/v0.1.0-rc3"},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
     ]
   end
 
@@ -87,7 +88,13 @@ defmodule LocalUpload.MixProject do
         "esbuild local_upload --minify",
         "phx.digest"
       ],
-      precommit: ["compile --warning-as-errors", "deps.unlock --unused", "format", "test"]
+      precommit: [
+        "compile --warning-as-errors",
+        "deps.unlock --unused",
+        "format",
+        "test",
+        "dialyzer"
+      ]
     ]
   end
 end

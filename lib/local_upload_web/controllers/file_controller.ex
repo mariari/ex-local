@@ -11,7 +11,7 @@ defmodule LocalUploadWeb.FileController do
     path = Uploads.file_path(name)
 
     if File.exists?(path) do
-      content_type = MIME.from_path(name) || "application/octet-stream"
+      content_type = MIME.from_path(name)
 
       conn
       |> put_resp_content_type(content_type)
