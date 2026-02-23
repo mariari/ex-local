@@ -1,0 +1,59 @@
+# CI
+#
+# I run the precommit suite on every push and pull request.
+# I compile with warnings-as-errors, check formatting,
+# run tests, and run dialyzer.
+name: CI
+on:
+  push:
+  pull_request:
+    branches: [master]
+
+env:
+  MIX_ENV: test
+  ELIXIR_VERSION: "1.18.3"
+  OTP_VERSION: "27.1"
+
+jobs:
+  precommit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: setup elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{ env.ELIXIR_VERSION }}
+          otp-version: ${{ env.OTP_VERSION }}
+
+      - name: cache deps and _build
+        uses: actions/cache@v4
+        with:
+          path: |
+            deps
+            _build
+          key: ${{ runner.os }}-mix-${{ env.ELIXIR_VERSION }}-${{ env.OTP_VERSION }}-${{ hashFiles('mix.lock') }}
+
+      - name: cache dialyzer PLT
+        uses: actions/cache@v4
+        with:
+          path: _build/**/dialyxir_*.plt
+          key: ${{ runner.os }}-plt-${{ env.ELIXIR_VERSION }}-${{ env.OTP_VERSION }}-${{ hashFiles('lib/**/*.ex') }}
+          restore-keys: |
+            ${{ runner.os }}-plt-${{ env.ELIXIR_VERSION }}-${{ env.OTP_VERSION }}-
+
+      - name: fetch dependencies
+        run: mix deps.get
+
+      - name: compile with warnings as errors
+        run: mix compile --warnings-as-errors
+
+      - name: check formatting
+        run: mix format --check-formatted
+
+      - name: run tests
+        run: mix test
+
+      - name: run dialyzer
+        run: mix dialyzer
