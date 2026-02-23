@@ -35,6 +35,21 @@ defmodule LocalUpload.EventStore do
     end)
   end
 
+  @doc "I rebuild all projections by replaying every event in order."
+  @spec replay() :: :ok
+  def replay do
+    Repo.transaction(fn ->
+      clear_projections()
+
+      Event
+      |> order_by([e], asc: e.id)
+      |> Repo.all()
+      |> Enum.each(&project/1)
+    end)
+
+    :ok
+  end
+
   @doc "I return all events for a given aggregate, ordered by time."
   @spec stream(integer()) :: [Event.t()]
   def stream(aggregate_id) do
@@ -81,5 +96,12 @@ defmodule LocalUpload.EventStore do
 
         :ok
     end
+  end
+
+  @spec clear_projections() :: any()
+  defp clear_projections do
+    Repo.delete_all(Vote)
+    Repo.delete_all(Comment)
+    Repo.delete_all(Upload)
   end
 end

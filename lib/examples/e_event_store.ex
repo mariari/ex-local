@@ -111,6 +111,38 @@ defmodule EEventStore do
     upload
   end
 
+  @spec replay_rebuilds() :: :ok
+  example replay_rebuilds do
+    # create state via events
+    upload = append_with_projection()
+    uploads_before = length(LocalUpload.Uploads.list_recent(100))
+    comments_before = length(LocalUpload.Comments.list_for_upload(upload.id))
+
+    assert uploads_before > 0
+    assert comments_before > 0
+
+    # snapshot state after events (upload was captured before vote)
+    pre_replay = LocalUpload.Uploads.get_by_stored_name(upload.stored_name)
+
+    # replay wipes and rebuilds from the event log
+    :ok = EventStore.replay()
+
+    # projections are rebuilt — counts match
+    uploads_after = length(LocalUpload.Uploads.list_recent(100))
+    assert uploads_after == uploads_before
+
+    # upload may have a new ID after replay, find by stored_name
+    rebuilt = LocalUpload.Uploads.get_by_stored_name(upload.stored_name)
+    assert rebuilt != nil
+    assert rebuilt.original_name == upload.original_name
+    assert rebuilt.vote_count == pre_replay.vote_count
+
+    comments_after = length(LocalUpload.Comments.list_for_upload(rebuilt.id))
+    assert comments_after == comments_before
+
+    :ok
+  end
+
   @spec rerun?(any()) :: boolean()
   def rerun?(_), do: false
 end
