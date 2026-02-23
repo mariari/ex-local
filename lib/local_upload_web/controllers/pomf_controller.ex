@@ -11,7 +11,28 @@ defmodule LocalUploadWeb.PomfController do
 
   @doc "I handle pomf-compatible file uploads."
   @spec upload(Plug.Conn.t(), map()) :: Plug.Conn.t()
-  def upload(conn, %{"files" => files} = params) when is_list(files) do
+  def upload(conn, params) do
+    case check_secret(params) do
+      :ok ->
+        do_upload(conn, params)
+
+      :unauthorized ->
+        conn
+        |> put_status(403)
+        |> json(PomfResponse.to_json(PomfResponse.error(403, "Invalid secret")))
+    end
+  end
+
+  @spec check_secret(map()) :: :ok | :unauthorized
+  defp check_secret(params) do
+    case Application.get_env(:local_upload, :upload_secret) do
+      nil -> :ok
+      secret -> if params["secret"] == secret, do: :ok, else: :unauthorized
+    end
+  end
+
+  @spec do_upload(Plug.Conn.t(), map()) :: Plug.Conn.t()
+  defp do_upload(conn, %{"files" => files} = params) when is_list(files) do
     uploader = Map.get(params, "uploader", "anonymous")
 
     results =
@@ -39,7 +60,7 @@ defmodule LocalUploadWeb.PomfController do
     end
   end
 
-  def upload(conn, _params) do
+  defp do_upload(conn, _params) do
     conn
     |> put_status(400)
     |> json(PomfResponse.to_json(PomfResponse.error(400, "No input file(s)")))

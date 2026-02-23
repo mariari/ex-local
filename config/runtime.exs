@@ -16,6 +16,12 @@ import Config
 #
 # Alternatively, you can use `mix phx.gen.release` to generate a `bin/server`
 # script that automatically sets the env var above.
+# Upload secret — when set, pomf uploads require a matching "secret" form field.
+# Leave unset for open uploads (dev default).
+if secret = System.get_env("UPLOAD_SECRET") do
+  config :local_upload, upload_secret: secret
+end
+
 if System.get_env("PHX_SERVER") do
   config :local_upload, LocalUploadWeb.Endpoint, server: true
 end

@@ -10,7 +10,8 @@ import Config
 config :local_upload,
   ecto_repos: [LocalUpload.Repo],
   generators: [timestamp_type: :utc_datetime],
-  upload_dir: "priv/uploads"
+  upload_dir: "priv/uploads",
+  upload_secret: nil
 
 # Configures the endpoint
 config :local_upload, LocalUploadWeb.Endpoint,
