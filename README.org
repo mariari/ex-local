@@ -2,3 +2,20 @@
 We provide a web server for uploading images.
 
 Currently all we wish to support is local uploading
+
+** Getting Started
+
+- Run ~mix setup~ to install and setup dependencies
+- Start Phoenix endpoint with ~mix phx.server~ or inside IEx with ~iex -S mix phx.server~
+
+Now you can visit [[http://localhost:4000]] from your browser.
+
+Ready to run in production? Please [[https://hexdocs.pm/phoenix/deployment.html][check the deployment guides]].
+
+** Learn more
+
+- [[https://www.phoenixframework.org/][Official website]]
+- [[https://hexdocs.pm/phoenix/overview.html][Guides]]
+- [[https://hexdocs.pm/phoenix][Docs]]
+- [[https://elixirforum.com/c/phoenix-forum][Forum]]
+- [[https://github.com/phoenixframework/phoenix][Source]]
