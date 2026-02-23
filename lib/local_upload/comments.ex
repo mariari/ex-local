@@ -7,6 +7,7 @@ defmodule LocalUpload.Comments do
   import Ecto.Query
   alias LocalUpload.Repo
   alias LocalUpload.Comments.Comment
+  alias LocalUpload.EventStore
 
   ############################################################
   #                        Public API                        #
@@ -16,9 +17,22 @@ defmodule LocalUpload.Comments do
   @spec create(map()) ::
           {:ok, Comment.t()} | {:error, Ecto.Changeset.t()}
   def create(attrs) do
-    %Comment{}
-    |> Comment.changeset(attrs)
-    |> Repo.insert()
+    upload_id = attrs["upload_id"] || attrs[:upload_id]
+    upload = LocalUpload.Uploads.get!(upload_id)
+
+    case EventStore.append(%{
+           type: "comment_added",
+           aggregate_id: upload.id,
+           data: %{
+             "stored_name" => upload.stored_name,
+             "body" => attrs["body"] || attrs[:body],
+             "author_name" => attrs["author_name"] || attrs[:author_name] || "Anonymous",
+             "ip_hash" => attrs["ip_hash"] || attrs[:ip_hash]
+           }
+         }) do
+      {:ok, {_event, comment}} -> {:ok, comment}
+      {:error, changeset} -> {:error, changeset}
+    end
   end
 
   @doc "I list all comments for an upload, oldest first."
