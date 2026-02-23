@@ -13,26 +13,23 @@ defmodule LocalUpload.Uploads do
   #                        Public API                        #
   ############################################################
 
-  @doc "I store a file from a Plug.Upload and create a DB record."
+  @doc """
+  I store a file from a Plug.Upload and create a DB record.
+
+  If a file with the same SHA-1 hash already exists, I return
+  the existing upload instead of storing a duplicate.
+  """
   @spec store_file(Plug.Upload.t(), String.t()) ::
           {:ok, Upload.t()} | {:error, Ecto.Changeset.t() | File.posix()}
   def store_file(%Plug.Upload{} = plug_upload, uploader \\ "anonymous") do
-    stored_name = generate_stored_name(plug_upload.filename)
-    dest = file_path(stored_name)
     hash = compute_hash(plug_upload.path)
-    size = File.stat!(plug_upload.path).size
 
-    with :ok <- File.cp(plug_upload.path, dest) do
-      %Upload{}
-      |> Upload.changeset(%{
-        original_name: plug_upload.filename,
-        stored_name: stored_name,
-        hash: hash,
-        size: size,
-        content_type: plug_upload.content_type || "application/octet-stream",
-        uploader: uploader
-      })
-      |> Repo.insert()
+    case Repo.get_by(Upload, hash: hash) do
+      %Upload{} = existing ->
+        {:ok, existing}
+
+      nil ->
+        store_new_file(plug_upload, hash, uploader)
     end
   end
 
@@ -83,6 +80,28 @@ defmodule LocalUpload.Uploads do
   #                   Private Implementation                 #
   ############################################################
 
+  @spec store_new_file(Plug.Upload.t(), String.t(), String.t()) ::
+          {:ok, Upload.t()} | {:error, Ecto.Changeset.t() | File.posix()}
+  defp store_new_file(plug_upload, hash, uploader) do
+    stored_name = generate_stored_name(plug_upload.filename)
+    dest = file_path(stored_name)
+    size = File.stat!(plug_upload.path).size
+
+    with :ok <- File.cp(plug_upload.path, dest) do
+      %Upload{}
+      |> Upload.changeset(%{
+        original_name: plug_upload.filename,
+        stored_name: stored_name,
+        hash: hash,
+        size: size,
+        content_type: plug_upload.content_type || "application/octet-stream",
+        uploader: uploader
+      })
+      |> Repo.insert()
+    end
+  end
+
+  @spec generate_stored_name(String.t()) :: String.t()
   defp generate_stored_name(original_name) do
     ext = Path.extname(original_name)
 
@@ -93,6 +112,7 @@ defmodule LocalUpload.Uploads do
     slug <> ext
   end
 
+  @spec compute_hash(Path.t()) :: String.t()
   defp compute_hash(path) do
     File.stream!(path, 2048)
     |> Enum.reduce(

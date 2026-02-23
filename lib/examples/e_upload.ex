@@ -42,6 +42,26 @@ defmodule EUpload do
     found
   end
 
+  @spec dedup_upload() :: Upload.t()
+  example dedup_upload do
+    upload = create_upload()
+
+    # uploading the same content again returns the existing record
+    path = Path.join(System.tmp_dir!(), "test_vomit_dup.txt")
+    File.write!(path, "hello from vomitchan!")
+
+    dup = %Plug.Upload{
+      path: path,
+      filename: "different_name.txt",
+      content_type: "text/plain"
+    }
+
+    {:ok, found} = Uploads.store_file(dup, "someone_else")
+    assert found.id == upload.id
+
+    found
+  end
+
   @spec list_recent_uploads() :: [Upload.t()]
   example list_recent_uploads do
     _upload = create_upload()
