@@ -68,6 +68,16 @@ defmodule EPomfRoundTrip do
     conn.status
   end
 
+  @spec path_traversal_blocked() :: integer()
+  example path_traversal_blocked do
+    conn =
+      build_conn()
+      |> Phoenix.ConnTest.get("/f/..%2fmix.exs")
+
+    assert conn.status == 400
+    conn.status
+  end
+
   @spec rerun?(any()) :: boolean()
   def rerun?(_), do: false
 end

@@ -8,18 +8,22 @@ defmodule LocalUploadWeb.FileController do
   @doc "I serve a stored file by its stored name."
   @spec show(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def show(conn, %{"name" => name}) do
-    path = Uploads.file_path(name)
-
-    if File.exists?(path) do
-      content_type = MIME.from_path(name)
-
-      conn
-      |> put_resp_content_type(content_type)
-      |> send_file(200, path)
+    if Path.basename(name) != name do
+      conn |> put_status(400) |> text("Invalid filename")
     else
-      conn
-      |> put_status(404)
-      |> text("File not found")
+      path = Uploads.file_path(name)
+
+      if File.exists?(path) do
+        content_type = MIME.from_path(name)
+
+        conn
+        |> put_resp_content_type(content_type)
+        |> send_file(200, path)
+      else
+        conn
+        |> put_status(404)
+        |> text("File not found")
+      end
     end
   end
 end
