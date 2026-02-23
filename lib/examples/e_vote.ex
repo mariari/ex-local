@@ -2,42 +2,37 @@ defmodule EVote do
   @moduledoc """
   I demonstrate voting on uploads and querying the top of the week.
   I build on EUpload.
-
-  ## Example
-
-      iex> {upload, top} = EVote.example()
-      iex> upload.vote_count
-      2
   """
 
+  use ExExample
   import ExUnit.Assertions
+
   alias LocalUpload.Votes
   alias LocalUpload.Uploads
+  alias LocalUpload.Uploads.Upload
 
-  @doc """
-  I create uploads, vote on them with different IPs, verify
-  rate limiting, and check the top-of-week query.
-  """
-  @spec example() ::
-          {LocalUpload.Uploads.Upload.t(), [LocalUpload.Uploads.Upload.t()]}
-  def example do
-    upload = EUpload.create_example()
+  @spec vote_on_upload() :: Upload.t()
+  example vote_on_upload do
+    upload = EUpload.create_upload()
 
-    # First vote succeeds
     assert Votes.vote(upload.id, "voter_aaa") == :ok
-    # Second vote from different IP succeeds
     assert Votes.vote(upload.id, "voter_bbb") == :ok
-    # Same IP voting again is rate-limited
     assert Votes.vote(upload.id, "voter_aaa") == :already_voted
 
-    # Reload to see updated vote count
     refreshed = Uploads.get!(upload.id)
     assert refreshed.vote_count == 2
 
-    # Top of week should include this upload
+    refreshed
+  end
+
+  @spec top_of_week() :: [Upload.t()]
+  example top_of_week do
+    upload = vote_on_upload()
     top = Uploads.top_of_week(10)
     assert Enum.any?(top, &(&1.id == upload.id))
-
-    {refreshed, top}
+    top
   end
+
+  @spec rerun?(any()) :: boolean()
+  def rerun?(_), do: false
 end

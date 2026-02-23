@@ -2,21 +2,16 @@ defmodule EPomfResponse do
   @moduledoc """
   I demonstrate building pomf JSON responses from uploads.
   I build on EUpload.
-
-  ## Example
-
-      iex> json = EPomfResponse.example()
-      iex> json["success"]
-      true
   """
 
+  use ExExample
   import ExUnit.Assertions
+
   alias LocalUpload.Uploads.PomfResponse
 
-  @doc "I create an upload and serialize it to pomf JSON format."
-  @spec example() :: map()
-  def example do
-    upload = EUpload.create_example()
+  @spec success_response() :: map()
+  example success_response do
+    upload = EUpload.create_upload()
 
     file_entry = %{
       hash: upload.hash,
@@ -38,9 +33,8 @@ defmodule EPomfResponse do
     json
   end
 
-  @doc "I demonstrate an error response."
-  @spec error_example() :: map()
-  def error_example do
+  @spec error_response() :: map()
+  example error_response do
     response = PomfResponse.error(400, "No input file(s)")
     json = PomfResponse.to_json(response)
 
@@ -50,4 +44,7 @@ defmodule EPomfResponse do
 
     json
   end
+
+  @spec rerun?(any()) :: boolean()
+  def rerun?(_), do: false
 end
