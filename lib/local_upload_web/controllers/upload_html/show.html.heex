@@ -1,0 +1,111 @@
+<Layouts.flash_group flash={@flash} />
+
+<div class="px-4 py-10 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-3xl">
+    <h1 class="text-2xl font-bold mb-2">{@upload.original_name}</h1>
+    <p class="text-base-content/60 mb-6">
+      Vomited by <strong>{@upload.uploader}</strong>
+      on {Calendar.strftime(@upload.inserted_at, "%Y-%m-%d %H:%M")}
+    </p>
+
+    <%!-- File display --%>
+    <div class="mb-6">
+      <img
+        :if={String.starts_with?(@upload.content_type, "image/")}
+        src={~p"/f/#{@upload.stored_name}"}
+        alt={@upload.original_name}
+        class="max-w-full rounded-lg shadow"
+      />
+      <video
+        :if={String.starts_with?(@upload.content_type, "video/")}
+        src={~p"/f/#{@upload.stored_name}"}
+        controls
+        class="max-w-full rounded-lg"
+      >
+      </video>
+      <audio
+        :if={String.starts_with?(@upload.content_type, "audio/")}
+        src={~p"/f/#{@upload.stored_name}"}
+        controls
+      >
+      </audio>
+    </div>
+
+    <%!-- File info and actions --%>
+    <div class="flex items-center gap-4 mb-8">
+      <a href={~p"/f/#{@upload.stored_name}"} class="btn btn-outline btn-sm">
+        Direct Link
+      </a>
+
+      <div class="text-sm text-base-content/60">
+        {format_bytes(@upload.size)} | {@upload.content_type} | SHA-1:
+        <code class="text-xs">{String.slice(@upload.hash, 0..11)}</code>
+      </div>
+
+      <form method="post" action={~p"/uploads/#{@upload.id}/vote"} class="ml-auto">
+        <input type="hidden" name="_csrf_token" value={Plug.CSRFProtection.get_csrf_token()} />
+        <button type="submit" class="btn btn-primary btn-sm">
+          +1 ({@upload.vote_count})
+        </button>
+      </form>
+    </div>
+
+    <%!-- Comments --%>
+    <h2 class="text-xl font-semibold mb-4">
+      Comments ({length(@comments)})
+    </h2>
+
+    <div :if={@comments == []} class="text-base-content/50 mb-6">
+      <p>No comments yet.</p>
+    </div>
+
+    <div :for={comment <- @comments} class="card bg-base-200 mb-3">
+      <div class="card-body p-4">
+        <div class="flex items-center gap-2 text-sm text-base-content/60 mb-1">
+          <strong>{comment.author_name}</strong>
+          <code class="text-xs">{comment.ip_hash}</code>
+          <span>{Calendar.strftime(comment.inserted_at, "%Y-%m-%d %H:%M")}</span>
+        </div>
+        <p>{comment.body}</p>
+      </div>
+    </div>
+
+    <%!-- Comment form --%>
+    <div class="card bg-base-100 border border-base-300 mt-6">
+      <div class="card-body">
+        <h3 class="card-title text-lg">Add a Comment</h3>
+        <form method="post" action={~p"/uploads/#{@upload.id}/comments"}>
+          <input type="hidden" name="_csrf_token" value={Plug.CSRFProtection.get_csrf_token()} />
+          <div class="form-control mb-3">
+            <label class="label">
+              <span class="label-text">Name (optional)</span>
+            </label>
+            <input
+              type="text"
+              name="comment[author_name]"
+              placeholder="Anonymous"
+              class="input input-bordered w-full max-w-xs"
+            />
+          </div>
+          <div class="form-control mb-3">
+            <label class="label">
+              <span class="label-text">Comment</span>
+            </label>
+            <textarea
+              name="comment[body]"
+              placeholder="Say something about this vomit..."
+              required
+              class="textarea textarea-bordered w-full"
+              rows="3"
+            ></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Post Comment</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="mt-6">
+      <a href={~p"/"} class="btn btn-outline btn-sm">Back to Home</a>
+    </div>
+  </div>
+</div>

@@ -29,8 +29,7 @@ defmodule LocalUpload.Uploads do
         stored_name: stored_name,
         hash: hash,
         size: size,
-        content_type:
-          plug_upload.content_type || "application/octet-stream",
+        content_type: plug_upload.content_type || "application/octet-stream",
         uploader: uploader
       })
       |> Repo.insert()

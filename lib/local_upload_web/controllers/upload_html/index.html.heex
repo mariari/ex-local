@@ -1,0 +1,42 @@
+<Layouts.flash_group flash={@flash} />
+
+<div class="px-4 py-10 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-3xl">
+    <h1 class="text-3xl font-bold mb-6">Browse Uploads</h1>
+
+    <div :if={@uploads == []} class="text-base-content/50">
+      <p>Nothing uploaded yet.</p>
+    </div>
+
+    <div :if={@uploads != []}>
+      <table class="table w-full">
+        <thead>
+          <tr>
+            <th>File</th>
+            <th>Uploader</th>
+            <th>Size</th>
+            <th>Votes</th>
+            <th>Uploaded</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr :for={upload <- @uploads}>
+            <td>
+              <a href={~p"/uploads/#{upload.id}"} class="link link-primary">
+                {upload.original_name}
+              </a>
+            </td>
+            <td>{upload.uploader}</td>
+            <td class="font-mono">{format_bytes(upload.size)}</td>
+            <td class="font-mono">+{upload.vote_count}</td>
+            <td>{Calendar.strftime(upload.inserted_at, "%Y-%m-%d %H:%M")}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-6">
+      <a href={~p"/"} class="btn btn-outline btn-sm">Back to Home</a>
+    </div>
+  </div>
+</div>
