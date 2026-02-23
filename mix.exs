@@ -64,7 +64,7 @@ defmodule LocalUpload.MixProject do
       {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.5"},
       {:typedstruct, "~> 0.5"},
-      {:ex_example, git: "https://github.com/anoma/ex_example", branch: "mariari/v0.1.0-rc3"},
+      {:ex_example, git: "https://github.com/anoma/ex_example", tag: "v0.1.0"},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
     ]
   end
