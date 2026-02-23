@@ -27,7 +27,19 @@
           <tr :for={{upload, idx} <- Enum.with_index(@top_uploads, 1)}>
             <td class="font-mono">{idx}</td>
             <td>
-              <a href={~p"/uploads/#{upload.id}"} class="link link-primary">
+              <a href={~p"/uploads/#{upload.id}"} class="link link-primary flex items-center gap-2">
+                <img
+                  :if={String.starts_with?(upload.content_type || "", "image/")}
+                  src={~p"/f/#{upload.stored_name}"}
+                  alt={upload.original_name}
+                  class="w-10 h-10 object-cover rounded"
+                />
+                <span
+                  :if={String.starts_with?(upload.content_type || "", "video/")}
+                  class="w-10 h-10 flex items-center justify-center bg-base-200 rounded text-lg"
+                >
+                  &#9654;
+                </span>
                 {upload.original_name}
               </a>
             </td>
@@ -57,7 +69,19 @@
         <tbody>
           <tr :for={upload <- @recent_uploads}>
             <td>
-              <a href={~p"/uploads/#{upload.id}"} class="link link-primary">
+              <a href={~p"/uploads/#{upload.id}"} class="link link-primary flex items-center gap-2">
+                <img
+                  :if={String.starts_with?(upload.content_type || "", "image/")}
+                  src={~p"/f/#{upload.stored_name}"}
+                  alt={upload.original_name}
+                  class="w-10 h-10 object-cover rounded"
+                />
+                <span
+                  :if={String.starts_with?(upload.content_type || "", "video/")}
+                  class="w-10 h-10 flex items-center justify-center bg-base-200 rounded text-lg"
+                >
+                  &#9654;
+                </span>
                 {upload.original_name}
               </a>
             </td>
