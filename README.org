@@ -1,0 +1,4 @@
+* Local Upload
+We provide a web server for uploading images.
+
+Currently all we wish to support is local uploading
