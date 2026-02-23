@@ -22,7 +22,10 @@
         <tbody>
           <tr :for={upload <- @uploads}>
             <td>
-              <a href={~p"/uploads/#{upload.id}"} class="link link-primary flex items-center gap-2">
+              <a
+                href={~p"/uploads/#{upload.id}"}
+                class="link link-primary flex items-center gap-2"
+              >
                 <img
                   :if={String.starts_with?(upload.content_type || "", "image/")}
                   src={~p"/f/#{upload.stored_name}"}
