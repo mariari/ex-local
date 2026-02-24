@@ -4,10 +4,7 @@ defmodule LocalUpload.Votes do
   rate limiting. I am the essential logic layer for votes.
   """
 
-  alias LocalUpload.Repo
-  alias LocalUpload.Votes.Vote
-  alias LocalUpload.Uploads.Upload
-  import Ecto.Query
+  alias LocalUpload.EventStore
 
   ############################################################
   #                        Public API                        #
@@ -22,27 +19,18 @@ defmodule LocalUpload.Votes do
   """
   @spec vote(integer(), String.t()) :: :ok | :already_voted
   def vote(upload_id, ip_hash) do
-    result =
-      Repo.transaction(fn ->
-        case Repo.insert(
-               %Vote{upload_id: upload_id, ip_hash: ip_hash},
-               on_conflict: :nothing,
-               conflict_target: [:upload_id, :ip_hash]
-             ) do
-          {:ok, %Vote{id: nil}} ->
-            :already_voted
+    upload = LocalUpload.Uploads.get!(upload_id)
 
-          {:ok, _vote} ->
-            Upload
-            |> where([u], u.id == ^upload_id)
-            |> Repo.update_all(inc: [vote_count: 1])
+    {:ok, {_event, result}} =
+      EventStore.append(%{
+        type: "vote_cast",
+        aggregate_id: upload.id,
+        data: %{
+          "stored_name" => upload.stored_name,
+          "ip_hash" => ip_hash
+        }
+      })
 
-            :ok
-        end
-      end)
-
-    case result do
-      {:ok, outcome} -> outcome
-    end
+    result
   end
 end

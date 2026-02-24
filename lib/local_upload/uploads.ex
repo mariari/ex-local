@@ -8,6 +8,7 @@ defmodule LocalUpload.Uploads do
   import Ecto.Query
   alias LocalUpload.Repo
   alias LocalUpload.Uploads.Upload
+  alias LocalUpload.EventStore
 
   ############################################################
   #                        Public API                        #
@@ -88,16 +89,20 @@ defmodule LocalUpload.Uploads do
     size = File.stat!(plug_upload.path).size
 
     with :ok <- File.cp(plug_upload.path, dest) do
-      %Upload{}
-      |> Upload.changeset(%{
-        original_name: plug_upload.filename,
-        stored_name: stored_name,
-        hash: hash,
-        size: size,
-        content_type: plug_upload.content_type || "application/octet-stream",
-        uploader: uploader
-      })
-      |> Repo.insert()
+      case EventStore.append(%{
+             type: "file_uploaded",
+             data: %{
+               "original_name" => plug_upload.filename,
+               "stored_name" => stored_name,
+               "hash" => hash,
+               "size" => size,
+               "content_type" => plug_upload.content_type || "application/octet-stream",
+               "uploader" => uploader
+             }
+           }) do
+        {:ok, {_event, upload}} -> {:ok, upload}
+        {:error, changeset} -> {:error, changeset}
+      end
     end
   end
 
