@@ -54,13 +54,13 @@ defmodule EEventStore do
         }
       })
 
-    # the projection created an Upload record
+    # the projection created an Upload in ETS
     assert %Upload{} = upload
     assert upload.original_name == "projected.txt"
     assert upload.stored_name == stored
     assert upload.uploader == "tester"
 
-    # it's in the DB
+    # it's in ETS
     found = LocalUpload.Uploads.get_by_stored_name(stored)
     assert found.stored_name == upload.stored_name
 
@@ -68,7 +68,6 @@ defmodule EEventStore do
     {:ok, {_comment_event, comment}} =
       EventStore.append(%{
         type: "comment_added",
-        aggregate_id: upload.id,
         data: %{
           "stored_name" => stored,
           "body" => "event-sourced comment",
@@ -78,13 +77,12 @@ defmodule EEventStore do
       })
 
     assert comment.body == "event-sourced comment"
-    assert comment.upload_id == upload.id
+    assert comment.stored_name == stored
 
     # vote projection
     {:ok, {_vote_event, :ok}} =
       EventStore.append(%{
         type: "vote_cast",
-        aggregate_id: upload.id,
         data: %{
           "stored_name" => stored,
           "ip_hash" => "voter123456789ab"
@@ -98,7 +96,6 @@ defmodule EEventStore do
     {:ok, {_dup_event, :already_voted}} =
       EventStore.append(%{
         type: "vote_cast",
-        aggregate_id: upload.id,
         data: %{
           "stored_name" => stored,
           "ip_hash" => "voter123456789ab"
