@@ -34,6 +34,7 @@ defmodule LocalUploadWeb.Router do
     get "/", PageController, :home
     get "/browse", UploadController, :index
     get "/uploads/:stored_name", UploadController, :show
+    delete "/uploads/:stored_name", UploadController, :delete
     post "/uploads/:stored_name/comments", CommentController, :create
     post "/uploads/:stored_name/vote", VoteController, :create
   end

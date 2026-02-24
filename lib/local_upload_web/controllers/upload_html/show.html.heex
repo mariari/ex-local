@@ -48,6 +48,16 @@
           +1 ({@upload.vote_count})
         </button>
       </form>
+
+      <form
+        method="post"
+        action={~p"/uploads/#{@upload.stored_name}"}
+        onsubmit="return confirm('Delete this file?')"
+      >
+        <input type="hidden" name="_method" value="delete" />
+        <input type="hidden" name="_csrf_token" value={Plug.CSRFProtection.get_csrf_token()} />
+        <button type="submit" class="btn btn-error btn-sm">Delete</button>
+      </form>
     </div>
 
     <%!-- Comments --%>
