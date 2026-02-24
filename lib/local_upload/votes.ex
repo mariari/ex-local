@@ -17,9 +17,9 @@ defmodule LocalUpload.Votes do
   this IP already voted on this upload. Rate limiting is enforced
   by the database unique index.
   """
-  @spec vote(integer(), String.t()) :: :ok | :already_voted
-  def vote(upload_id, ip_hash) do
-    upload = LocalUpload.Uploads.get!(upload_id)
+  @spec vote(String.t(), String.t()) :: :ok | :already_voted
+  def vote(stored_name, ip_hash) do
+    upload = LocalUpload.Uploads.get!(stored_name)
 
     {:ok, {_event, result}} =
       EventStore.append(%{

@@ -33,8 +33,8 @@ defmodule LocalUploadWeb.Router do
 
     get "/", PageController, :home
     get "/browse", UploadController, :index
-    get "/uploads/:id", UploadController, :show
-    post "/uploads/:id/comments", CommentController, :create
-    post "/uploads/:id/vote", VoteController, :create
+    get "/uploads/:stored_name", UploadController, :show
+    post "/uploads/:stored_name/comments", CommentController, :create
+    post "/uploads/:stored_name/vote", VoteController, :create
   end
 end
