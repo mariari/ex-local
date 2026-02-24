@@ -1,62 +1,30 @@
 defmodule LocalUpload.Uploads.Upload do
-  @moduledoc "I am the Upload schema. I represent a file stored on disk."
+  @moduledoc "I am the Upload struct. I represent a file stored on disk."
 
-  use Ecto.Schema
-  import Ecto.Changeset
+  use TypedStruct
 
-  @type t :: %__MODULE__{
-          id: integer() | nil,
-          original_name: String.t() | nil,
-          stored_name: String.t() | nil,
-          hash: String.t() | nil,
-          size: integer() | nil,
-          content_type: String.t() | nil,
-          uploader: String.t(),
-          vote_count: integer(),
-          comments:
-            [LocalUpload.Comments.Comment.t()]
-            | Ecto.Association.NotLoaded.t(),
-          votes:
-            [LocalUpload.Votes.Vote.t()]
-            | Ecto.Association.NotLoaded.t(),
-          inserted_at: DateTime.t() | nil,
-          updated_at: DateTime.t() | nil
-        }
-
-  schema "uploads" do
-    field :original_name, :string
-    field :stored_name, :string
-    field :hash, :string
-    field :size, :integer
-    field :content_type, :string
-    field :uploader, :string, default: "anonymous"
-    field :vote_count, :integer, default: 0
-
-    has_many :comments, LocalUpload.Comments.Comment
-    has_many :votes, LocalUpload.Votes.Vote
-
-    timestamps(type: :utc_datetime)
+  typedstruct do
+    field :stored_name, String.t(), enforce: true
+    field :original_name, String.t(), enforce: true
+    field :hash, String.t(), enforce: true
+    field :size, integer(), enforce: true
+    field :content_type, String.t(), enforce: true
+    field :uploader, String.t(), default: "anonymous"
+    field :vote_count, integer(), default: 0
+    field :inserted_at, DateTime.t()
   end
 
-  @doc "I build a changeset for creating an upload record."
-  @spec changeset(t() | Ecto.Changeset.t(), map()) :: Ecto.Changeset.t()
-  def changeset(upload, attrs) do
-    upload
-    |> cast(attrs, [
-      :original_name,
-      :stored_name,
-      :hash,
-      :size,
-      :content_type,
-      :uploader
-    ])
-    |> validate_required([
-      :original_name,
-      :stored_name,
-      :hash,
-      :size,
-      :content_type
-    ])
-    |> unique_constraint(:stored_name)
+  @doc "I build an Upload from event data."
+  @spec new(map()) :: t()
+  def new(data) do
+    %__MODULE__{
+      stored_name: data["stored_name"],
+      original_name: data["original_name"],
+      hash: data["hash"],
+      size: data["size"],
+      content_type: data["content_type"],
+      uploader: data["uploader"] || "anonymous",
+      inserted_at: DateTime.utc_now()
+    }
   end
 end
