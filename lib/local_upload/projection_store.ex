@@ -75,11 +75,13 @@ defmodule LocalUpload.ProjectionStore do
     :ets.new(@uploads, [:set, :public, :named_table, read_concurrency: true])
     :ets.new(@comments, [:ordered_set, :public, :named_table, read_concurrency: true])
     :ets.new(@votes, [:set, :public, :named_table, read_concurrency: true])
-    do_replay()
-    {:ok, %{}}
+    {:ok, %{wm: do_replay()}}
   end
 
   @impl true
+  def handle_call({:project, %Event{id: id}}, _from, %{wm: wm} = s) when id <= wm,
+    do: {:reply, :already_projected, s}
+
   def handle_call({:project, event}, _from, state),
     do: {:reply, do_project(event), state}
 
@@ -87,8 +89,7 @@ defmodule LocalUpload.ProjectionStore do
     :ets.delete_all_objects(@uploads)
     :ets.delete_all_objects(@comments)
     :ets.delete_all_objects(@votes)
-    do_replay()
-    {:reply, :ok, state}
+    {:reply, :ok, %{state | wm: do_replay()}}
   end
 
   ############################################################
@@ -130,9 +131,13 @@ defmodule LocalUpload.ProjectionStore do
   defp do_replay do
     import Ecto.Query
 
-    Event
-    |> order_by(asc: :id)
-    |> LocalUpload.Repo.all()
-    |> Enum.each(&do_project/1)
+    events = Event |> order_by(asc: :id) |> LocalUpload.Repo.all()
+    Enum.each(events, &do_project/1)
+
+    List.last(events)
+    |> then(fn
+      nil -> 0
+      e -> e.id
+    end)
   end
 end
