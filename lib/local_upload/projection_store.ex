@@ -96,6 +96,7 @@ defmodule LocalUpload.ProjectionStore do
   #                   Private Implementation                 #
   ############################################################
 
+  @spec do_project(Event.t()) :: term()
   defp do_project(%Event{type: "file_uploaded", data: data}) do
     upload = Upload.new(data)
     :ets.insert(@uploads, {upload.stored_name, upload})
@@ -136,6 +137,7 @@ defmodule LocalUpload.ProjectionStore do
     end
   end
 
+  @spec do_replay() :: non_neg_integer()
   defp do_replay do
     import Ecto.Query
 

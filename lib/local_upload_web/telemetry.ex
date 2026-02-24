@@ -83,6 +83,7 @@ defmodule LocalUploadWeb.Telemetry do
     ]
   end
 
+  @spec periodic_measurements() :: list()
   defp periodic_measurements do
     [
       # A module, function and arguments to be invoked periodically.

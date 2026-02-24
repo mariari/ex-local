@@ -77,6 +77,7 @@ defmodule LocalUploadWeb do
     end
   end
 
+  @spec html_helpers() :: Macro.t()
   defp html_helpers do
     quote do
       # Translation
