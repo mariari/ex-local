@@ -36,6 +36,15 @@ defmodule LocalUpload.EventStore do
   @spec replay() :: :ok
   def replay, do: ProjectionStore.rebuild()
 
+  @doc "I return the most recent events, newest first."
+  @spec recent(integer()) :: [Event.t()]
+  def recent(limit \\ 50) do
+    Event
+    |> order_by([e], desc: e.id)
+    |> limit(^limit)
+    |> Repo.all()
+  end
+
   @doc "I return all events for a given aggregate, ordered by time."
   @spec stream(integer()) :: [Event.t()]
   def stream(aggregate_id) do

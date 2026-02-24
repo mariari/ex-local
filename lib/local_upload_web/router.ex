@@ -36,6 +36,7 @@ defmodule LocalUploadWeb.Router do
     get "/auth", AuthController, :new
     post "/auth", AuthController, :create
     delete "/auth", AuthController, :delete
+    get "/admin", AdminController, :index
     get "/browse", UploadController, :index
     get "/uploads/:stored_name", UploadController, :show
     delete "/uploads/:stored_name", UploadController, :delete

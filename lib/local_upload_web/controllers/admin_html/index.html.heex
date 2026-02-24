@@ -1,0 +1,148 @@
+<Layouts.flash_group flash={@flash} />
+
+<div class="px-4 py-10 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-5xl">
+    <h1 class="text-3xl font-bold mb-6">Dashboard</h1>
+
+    <%!-- Stats --%>
+    <div class="stats shadow mb-8">
+      <div class="stat">
+        <div class="stat-title">Files</div>
+        <div class="stat-value">{@upload_count}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">Disk Usage</div>
+        <div class="stat-value text-lg">{format_bytes(@total_size)}</div>
+      </div>
+    </div>
+
+    <%!-- Thumbnail Collage --%>
+    <h2 class="text-xl font-semibold mb-4">Upload Collage</h2>
+
+    <div :if={@uploads == []} class="mb-8 text-base-content/50">
+      <p>No uploads yet.</p>
+    </div>
+
+    <div :if={@uploads != []} class="mb-8 grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-1">
+      <a
+        :for={upload <- @uploads}
+        href={~p"/uploads/#{upload.stored_name}"}
+        class="aspect-square block overflow-hidden rounded bg-base-200 relative group"
+        title={"#{upload.original_name} — #{format_bytes(upload.size)}"}
+      >
+        <img
+          :if={image?(upload)}
+          src={~p"/f/#{upload.stored_name}"}
+          alt={upload.original_name}
+          class="w-full h-full object-cover"
+          loading="lazy"
+        />
+        <span
+          :if={video?(upload)}
+          class="w-full h-full flex items-center justify-center text-2xl"
+        >
+          &#9654;
+        </span>
+        <span
+          :if={!image?(upload) && !video?(upload)}
+          class="w-full h-full flex items-center justify-center text-xs text-base-content/40 font-mono"
+        >
+          {Path.extname(upload.stored_name)}
+        </span>
+        <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-1">
+          <span class="text-white text-[10px] leading-tight truncate">
+            {upload.original_name}
+          </span>
+        </div>
+      </a>
+    </div>
+
+    <%!-- Upload Table --%>
+    <h2 class="text-xl font-semibold mb-4">All Uploads</h2>
+
+    <div :if={@uploads != []} class="mb-8 overflow-x-auto">
+      <table class="table table-sm w-full">
+        <thead>
+          <tr>
+            <th>File</th>
+            <th>Original Name</th>
+            <th>Size</th>
+            <th>Votes</th>
+            <th>Uploaded</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr :for={upload <- @uploads}>
+            <td>
+              <a href={~p"/f/#{upload.stored_name}"} class="link link-primary font-mono text-xs">
+                {upload.stored_name}
+              </a>
+            </td>
+            <td class="max-w-48 truncate">{upload.original_name}</td>
+            <td class="font-mono">{format_bytes(upload.size)}</td>
+            <td class="font-mono">+{upload.vote_count}</td>
+            <td class="whitespace-nowrap">
+              {Calendar.strftime(upload.inserted_at, "%Y-%m-%d %H:%M")}
+            </td>
+            <td>
+              <form method="post" action={~p"/uploads/#{upload.stored_name}"}>
+                <input type="hidden" name="_method" value="delete" />
+                <input type="hidden" name="_csrf_token" value={Plug.CSRFProtection.get_csrf_token()} />
+                <button
+                  type="submit"
+                  class="btn btn-error btn-xs"
+                  data-confirm="Delete this file permanently?"
+                >
+                  delete
+                </button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <%!-- Event Log --%>
+    <h2 class="text-xl font-semibold mb-4">Recent Events</h2>
+
+    <div class="overflow-x-auto">
+      <table class="table table-xs w-full font-mono">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Type</th>
+            <th>Data</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr :for={event <- @events}>
+            <td>{event.id}</td>
+            <td>
+              <span class={[
+                "badge badge-sm",
+                event.type == "file_uploaded" && "badge-success",
+                event.type == "file_deleted" && "badge-error",
+                event.type == "comment_added" && "badge-info",
+                event.type == "vote_cast" && "badge-warning"
+              ]}>
+                {event.type}
+              </span>
+            </td>
+            <td class="max-w-md truncate text-xs text-base-content/60">
+              {inspect(event.data)}
+            </td>
+            <td class="whitespace-nowrap">
+              {Calendar.strftime(event.inserted_at, "%Y-%m-%d %H:%M:%S")}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-6">
+      <a href={~p"/"} class="btn btn-outline btn-sm">Back to Home</a>
+    </div>
+  </div>
+</div>
