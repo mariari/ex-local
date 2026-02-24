@@ -108,6 +108,14 @@ defmodule LocalUpload.ProjectionStore do
     comment
   end
 
+  defp do_project(%Event{type: "file_deleted", data: data}) do
+    name = data["stored_name"]
+    :ets.delete(@uploads, name)
+    :ets.match_delete(@comments, {{name, :_}, :_})
+    :ets.match_delete(@votes, {{name, :_}, :_})
+    :ok
+  end
+
   defp do_project(%Event{type: "vote_cast", data: data}) do
     key = {data["stored_name"], data["ip_hash"]}
 

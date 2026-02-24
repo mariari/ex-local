@@ -19,4 +19,12 @@ defmodule LocalUploadWeb.UploadController do
     comments = Comments.list_for_upload(stored_name)
     render(conn, :show, upload: upload, comments: comments)
   end
+
+  def delete(conn, %{"stored_name" => stored_name}) do
+    :ok = Uploads.delete(stored_name)
+
+    conn
+    |> put_flash(:info, "File deleted.")
+    |> redirect(to: ~p"/")
+  end
 end
