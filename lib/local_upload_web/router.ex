@@ -9,6 +9,7 @@ defmodule LocalUploadWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug LocalUploadWeb.Plugs.IPHash
+    plug LocalUploadWeb.Plugs.Auth
   end
 
   pipeline :pomf_api do
@@ -32,6 +33,9 @@ defmodule LocalUploadWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/auth", AuthController, :new
+    post "/auth", AuthController, :create
+    delete "/auth", AuthController, :delete
     get "/browse", UploadController, :index
     get "/uploads/:stored_name", UploadController, :show
     delete "/uploads/:stored_name", UploadController, :delete
