@@ -42,7 +42,7 @@
         <code class="text-xs">{String.slice(@upload.hash, 0..11)}</code>
       </div>
 
-      <form method="post" action={~p"/uploads/#{@upload.id}/vote"} class="ml-auto">
+      <form method="post" action={~p"/uploads/#{@upload.stored_name}/vote"} class="ml-auto">
         <input type="hidden" name="_csrf_token" value={Plug.CSRFProtection.get_csrf_token()} />
         <button type="submit" class="btn btn-primary btn-sm">
           +1 ({@upload.vote_count})
@@ -74,7 +74,7 @@
     <div class="card bg-base-100 border border-base-300 mt-6">
       <div class="card-body">
         <h3 class="card-title text-lg">Add a Comment</h3>
-        <form method="post" action={~p"/uploads/#{@upload.id}/comments"}>
+        <form method="post" action={~p"/uploads/#{@upload.stored_name}/comments"}>
           <input type="hidden" name="_csrf_token" value={Plug.CSRFProtection.get_csrf_token()} />
           <div class="form-control mb-3">
             <label class="label">

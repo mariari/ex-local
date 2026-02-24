@@ -5,17 +5,16 @@ defmodule LocalUpload.Uploads do
   derived views over the uploads relation live here.
   """
 
-  import Ecto.Query
-  alias LocalUpload.Repo
   alias LocalUpload.Uploads.Upload
   alias LocalUpload.EventStore
+  alias LocalUpload.ProjectionStore
 
   ############################################################
   #                        Public API                        #
   ############################################################
 
   @doc """
-  I store a file from a Plug.Upload and create a DB record.
+  I store a file from a Plug.Upload and create a record.
 
   If a file with the same SHA-1 hash already exists, I return
   the existing upload instead of storing a duplicate.
@@ -25,7 +24,7 @@ defmodule LocalUpload.Uploads do
   def store_file(%Plug.Upload{} = plug_upload, uploader \\ "anonymous") do
     hash = compute_hash(plug_upload.path)
 
-    case Upload |> where(hash: ^hash) |> limit(1) |> Repo.one() do
+    case ProjectionStore.find_by_hash(hash) do
       %Upload{} = existing ->
         {:ok, existing}
 
@@ -36,46 +35,43 @@ defmodule LocalUpload.Uploads do
 
   @doc "I find an upload by its stored filename."
   @spec get_by_stored_name(String.t()) :: Upload.t() | nil
-  def get_by_stored_name(name) do
-    Repo.get_by(Upload, stored_name: name)
-  end
+  def get_by_stored_name(name),
+    do: ProjectionStore.get_upload(name)
 
-  @doc "I fetch an upload by ID, raising if not found."
-  @spec get!(integer()) :: Upload.t()
-  def get!(id), do: Repo.get!(Upload, id)
+  @doc "I fetch an upload by stored_name, raising if not found."
+  @spec get!(String.t()) :: Upload.t()
+  def get!(stored_name) do
+    ProjectionStore.get_upload(stored_name) ||
+      raise "upload not found: #{stored_name}"
+  end
 
   @doc "I return the top voted uploads from the last 7 days."
   @spec top_of_week(integer()) :: [Upload.t()]
   def top_of_week(limit \\ 10) do
     week_ago = DateTime.add(DateTime.utc_now(), -7, :day)
 
-    Upload
-    |> where([u], u.inserted_at >= ^week_ago)
-    |> order_by([u], desc: u.vote_count)
-    |> limit(^limit)
-    |> Repo.all()
+    ProjectionStore.list_uploads()
+    |> Enum.filter(&(DateTime.compare(&1.inserted_at, week_ago) != :lt))
+    |> Enum.sort_by(& &1.vote_count, :desc)
+    |> Enum.take(limit)
   end
 
   @doc "I return the most recently uploaded files."
   @spec list_recent(integer()) :: [Upload.t()]
   def list_recent(limit \\ 50) do
-    Upload
-    |> order_by([u], desc: u.inserted_at)
-    |> limit(^limit)
-    |> Repo.all()
+    ProjectionStore.list_uploads()
+    |> Enum.take(limit)
   end
 
   @doc "I return the full filesystem path for a stored filename."
   @spec file_path(String.t()) :: String.t()
-  def file_path(stored_name) do
-    Path.join(upload_dir(), stored_name)
-  end
+  def file_path(stored_name),
+    do: Path.join(upload_dir(), stored_name)
 
   @doc "I return the configured upload directory."
   @spec upload_dir() :: String.t()
-  def upload_dir do
-    Application.get_env(:local_upload, :upload_dir, "priv/uploads")
-  end
+  def upload_dir,
+    do: Application.get_env(:local_upload, :upload_dir, "priv/uploads")
 
   ############################################################
   #                   Private Implementation                 #

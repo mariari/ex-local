@@ -14,9 +14,9 @@ defmodule LocalUploadWeb.UploadController do
     render(conn, :index, uploads: uploads)
   end
 
-  def show(conn, %{"id" => id}) do
-    upload = Uploads.get!(id)
-    comments = Comments.list_for_upload(upload.id)
+  def show(conn, %{"stored_name" => stored_name}) do
+    upload = Uploads.get!(stored_name)
+    comments = Comments.list_for_upload(stored_name)
     render(conn, :show, upload: upload, comments: comments)
   end
 end
