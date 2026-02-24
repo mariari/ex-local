@@ -5,17 +5,17 @@ defmodule LocalUploadWeb.VoteController do
 
   alias LocalUpload.Votes
 
-  def create(conn, %{"id" => upload_id}) do
-    case Votes.vote(String.to_integer(upload_id), conn.assigns.ip_hash) do
+  def create(conn, %{"stored_name" => stored_name}) do
+    case Votes.vote(stored_name, conn.assigns.ip_hash) do
       :ok ->
         conn
         |> put_flash(:info, "Vote recorded!")
-        |> redirect(to: ~p"/uploads/#{upload_id}")
+        |> redirect(to: ~p"/uploads/#{stored_name}")
 
       :already_voted ->
         conn
         |> put_flash(:info, "You already voted on this file.")
-        |> redirect(to: ~p"/uploads/#{upload_id}")
+        |> redirect(to: ~p"/uploads/#{stored_name}")
     end
   end
 end

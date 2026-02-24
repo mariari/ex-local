@@ -19,14 +19,14 @@ defmodule EComment do
       Comments.create(%{
         body: "nice vomit!",
         author_name: "anon",
-        upload_id: upload.id,
+        stored_name: upload.stored_name,
         ip_hash: "abcdef1234567890"
       })
 
     {:ok, c2} =
       Comments.create(%{
         body: "truly disgusting, 10/10",
-        upload_id: upload.id,
+        stored_name: upload.stored_name,
         ip_hash: "1234567890abcdef"
       })
 
@@ -40,7 +40,7 @@ defmodule EComment do
   @spec list_comments() :: [Comment.t()]
   example list_comments do
     {upload, _} = add_comments()
-    comments = Comments.list_for_upload(upload.id)
+    comments = Comments.list_for_upload(upload.stored_name)
     assert length(comments) >= 2
     assert hd(comments).body == "nice vomit!"
     comments

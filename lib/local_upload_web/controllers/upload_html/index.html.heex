@@ -23,7 +23,7 @@
           <tr :for={upload <- @uploads}>
             <td>
               <a
-                href={~p"/uploads/#{upload.id}"}
+                href={~p"/uploads/#{upload.stored_name}"}
                 class="link link-primary flex items-center gap-2"
               >
                 <img

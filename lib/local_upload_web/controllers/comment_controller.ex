@@ -5,10 +5,10 @@ defmodule LocalUploadWeb.CommentController do
 
   alias LocalUpload.Comments
 
-  def create(conn, %{"id" => upload_id, "comment" => comment_params}) do
+  def create(conn, %{"stored_name" => stored_name, "comment" => comment_params}) do
     attrs =
       Map.merge(comment_params, %{
-        "upload_id" => upload_id,
+        "stored_name" => stored_name,
         "ip_hash" => conn.assigns.ip_hash
       })
 
@@ -16,12 +16,12 @@ defmodule LocalUploadWeb.CommentController do
       {:ok, _comment} ->
         conn
         |> put_flash(:info, "Comment posted.")
-        |> redirect(to: ~p"/uploads/#{upload_id}")
+        |> redirect(to: ~p"/uploads/#{stored_name}")
 
       {:error, _changeset} ->
         conn
         |> put_flash(:error, "Could not post comment.")
-        |> redirect(to: ~p"/uploads/#{upload_id}")
+        |> redirect(to: ~p"/uploads/#{stored_name}")
     end
   end
 end

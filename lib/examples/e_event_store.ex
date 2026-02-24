@@ -62,7 +62,7 @@ defmodule EEventStore do
 
     # it's in the DB
     found = LocalUpload.Uploads.get_by_stored_name(stored)
-    assert found.id == upload.id
+    assert found.stored_name == upload.stored_name
 
     # comment projection
     {:ok, {_comment_event, comment}} =
@@ -91,7 +91,7 @@ defmodule EEventStore do
         }
       })
 
-    refreshed = LocalUpload.Uploads.get!(upload.id)
+    refreshed = LocalUpload.Uploads.get!(stored)
     assert refreshed.vote_count == 1
 
     # duplicate vote
@@ -105,7 +105,7 @@ defmodule EEventStore do
         }
       })
 
-    still_one = LocalUpload.Uploads.get!(upload.id)
+    still_one = LocalUpload.Uploads.get!(stored)
     assert still_one.vote_count == 1
 
     upload
@@ -116,12 +116,12 @@ defmodule EEventStore do
     # create state via events
     upload = append_with_projection()
     uploads_before = length(LocalUpload.Uploads.list_recent(100))
-    comments_before = length(LocalUpload.Comments.list_for_upload(upload.id))
+    comments_before = length(LocalUpload.Comments.list_for_upload(upload.stored_name))
 
     assert uploads_before > 0
     assert comments_before > 0
 
-    # snapshot state after events (upload was captured before vote)
+    # snapshot state after events
     pre_replay = LocalUpload.Uploads.get_by_stored_name(upload.stored_name)
 
     # replay wipes and rebuilds from the event log
@@ -131,13 +131,12 @@ defmodule EEventStore do
     uploads_after = length(LocalUpload.Uploads.list_recent(100))
     assert uploads_after == uploads_before
 
-    # upload may have a new ID after replay, find by stored_name
     rebuilt = LocalUpload.Uploads.get_by_stored_name(upload.stored_name)
     assert rebuilt != nil
     assert rebuilt.original_name == upload.original_name
     assert rebuilt.vote_count == pre_replay.vote_count
 
-    comments_after = length(LocalUpload.Comments.list_for_upload(rebuilt.id))
+    comments_after = length(LocalUpload.Comments.list_for_upload(rebuilt.stored_name))
     assert comments_after == comments_before
 
     :ok

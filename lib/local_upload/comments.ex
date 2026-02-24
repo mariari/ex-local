@@ -17,8 +17,8 @@ defmodule LocalUpload.Comments do
   @spec create(map()) ::
           {:ok, Comment.t()} | {:error, Ecto.Changeset.t()}
   def create(attrs) do
-    upload_id = attrs["upload_id"] || attrs[:upload_id]
-    upload = LocalUpload.Uploads.get!(upload_id)
+    stored_name = attrs["stored_name"] || attrs[:stored_name]
+    upload = LocalUpload.Uploads.get!(stored_name)
 
     case EventStore.append(%{
            type: "comment_added",
@@ -36,10 +36,12 @@ defmodule LocalUpload.Comments do
   end
 
   @doc "I list all comments for an upload, oldest first."
-  @spec list_for_upload(integer()) :: [Comment.t()]
-  def list_for_upload(upload_id) do
+  @spec list_for_upload(String.t()) :: [Comment.t()]
+  def list_for_upload(stored_name) do
+    upload = LocalUpload.Uploads.get!(stored_name)
+
     Comment
-    |> where([c], c.upload_id == ^upload_id)
+    |> where([c], c.upload_id == ^upload.id)
     |> order_by([c], asc: c.inserted_at)
     |> Repo.all()
   end

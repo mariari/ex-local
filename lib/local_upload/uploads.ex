@@ -40,9 +40,11 @@ defmodule LocalUpload.Uploads do
     Repo.get_by(Upload, stored_name: name)
   end
 
-  @doc "I fetch an upload by ID, raising if not found."
-  @spec get!(integer()) :: Upload.t()
-  def get!(id), do: Repo.get!(Upload, id)
+  @doc "I fetch an upload by stored_name, raising if not found."
+  @spec get!(String.t()) :: Upload.t()
+  def get!(stored_name) do
+    Repo.get_by!(Upload, stored_name: stored_name)
+  end
 
   @doc "I return the top voted uploads from the last 7 days."
   @spec top_of_week(integer()) :: [Upload.t()]

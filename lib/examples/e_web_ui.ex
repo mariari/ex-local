@@ -50,7 +50,7 @@ defmodule EWebUI do
 
     conn =
       build_conn()
-      |> Phoenix.ConnTest.get("/uploads/#{upload.id}")
+      |> Phoenix.ConnTest.get("/uploads/#{upload.stored_name}")
 
     assert conn.status == 200
     assert conn.resp_body =~ upload.original_name
@@ -69,23 +69,23 @@ defmodule EWebUI do
     vote_conn =
       build_conn()
       |> put_req_header("content-type", "application/x-www-form-urlencoded")
-      |> Phoenix.ConnTest.post("/uploads/#{upload.id}/vote")
+      |> Phoenix.ConnTest.post("/uploads/#{upload.stored_name}/vote")
 
     assert vote_conn.status == 302
 
     # verify count incremented
-    refreshed = Uploads.get!(upload.id)
+    refreshed = Uploads.get!(upload.stored_name)
     assert refreshed.vote_count == 1
 
     # voting again from same IP is idempotent
     vote_conn2 =
       build_conn()
       |> put_req_header("content-type", "application/x-www-form-urlencoded")
-      |> Phoenix.ConnTest.post("/uploads/#{upload.id}/vote")
+      |> Phoenix.ConnTest.post("/uploads/#{upload.stored_name}/vote")
 
     assert vote_conn2.status == 302
 
-    still_one = Uploads.get!(upload.id)
+    still_one = Uploads.get!(upload.stored_name)
     assert still_one.vote_count == 1
 
     vote_conn
@@ -107,7 +107,7 @@ defmodule EWebUI do
       build_conn()
       |> put_req_header("content-type", "application/x-www-form-urlencoded")
       |> Phoenix.ConnTest.post(
-        "/uploads/#{upload.id}/comments",
+        "/uploads/#{upload.stored_name}/comments",
         %{"comment" => %{"body" => "nice vomit!", "author_name" => "tester"}}
       )
 
@@ -116,7 +116,7 @@ defmodule EWebUI do
     # verify comment exists on show page
     show_conn =
       build_conn()
-      |> Phoenix.ConnTest.get("/uploads/#{upload.id}")
+      |> Phoenix.ConnTest.get("/uploads/#{upload.stored_name}")
 
     assert show_conn.resp_body =~ "nice vomit!"
     assert show_conn.resp_body =~ "tester"
