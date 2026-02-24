@@ -63,6 +63,21 @@ defmodule LocalUpload.Uploads do
     |> Enum.take(limit)
   end
 
+  @doc "I delete an upload — shred the file, then record the event."
+  @spec delete(String.t()) :: :ok
+  def delete(stored_name) do
+    _upload = get!(stored_name)
+    shred_file(stored_name)
+
+    {:ok, _} =
+      EventStore.append(%{
+        type: "file_deleted",
+        data: %{"stored_name" => stored_name}
+      })
+
+    :ok
+  end
+
   @doc "I return the full filesystem path for a stored filename."
   @spec file_path(String.t()) :: String.t()
   def file_path(stored_name),
@@ -100,6 +115,17 @@ defmodule LocalUpload.Uploads do
         {:error, changeset} -> {:error, changeset}
       end
     end
+  end
+
+  @spec shred_file(String.t()) :: :ok
+  defp shred_file(stored_name) do
+    path = file_path(stored_name)
+
+    if File.exists?(path) do
+      System.cmd("shred", ["-n", "32", "-z", "-u", path])
+    end
+
+    :ok
   end
 
   @spec generate_stored_name(String.t()) :: String.t()
