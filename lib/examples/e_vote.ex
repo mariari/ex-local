@@ -15,11 +15,11 @@ defmodule EVote do
   example vote_on_upload do
     upload = EUpload.create_upload()
 
-    assert Votes.vote(upload.id, "voter_aaa") == :ok
-    assert Votes.vote(upload.id, "voter_bbb") == :ok
-    assert Votes.vote(upload.id, "voter_aaa") == :already_voted
+    assert Votes.vote(upload.stored_name, "voter_aaa") == :ok
+    assert Votes.vote(upload.stored_name, "voter_bbb") == :ok
+    assert Votes.vote(upload.stored_name, "voter_aaa") == :already_voted
 
-    refreshed = Uploads.get!(upload.id)
+    refreshed = Uploads.get!(upload.stored_name)
     assert refreshed.vote_count == 2
 
     refreshed
@@ -29,7 +29,7 @@ defmodule EVote do
   example top_of_week do
     upload = vote_on_upload()
     top = Uploads.top_of_week(10)
-    assert Enum.any?(top, &(&1.id == upload.id))
+    assert Enum.any?(top, &(&1.stored_name == upload.stored_name))
     top
   end
 
