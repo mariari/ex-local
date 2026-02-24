@@ -108,6 +108,16 @@ defmodule LocalUpload.ProjectionStore do
     comment
   end
 
+  defp do_project(%Event{type: "thumbnail_generated", data: data}) do
+    case :ets.lookup(@uploads, data["stored_name"]) do
+      [{k, upload}] ->
+        :ets.insert(@uploads, {k, %{upload | thumb_name: data["thumb_name"]}})
+
+      [] ->
+        :ok
+    end
+  end
+
   defp do_project(%Event{type: "file_deleted", data: data}) do
     name = data["stored_name"]
     :ets.delete(@uploads, name)

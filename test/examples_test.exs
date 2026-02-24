@@ -39,6 +39,11 @@ defmodule ExamplesTest do
     EEventStore.replay_rebuilds()
   end
 
+  test "EThumbnail" do
+    EThumbnail.generate_thumbnail()
+    EThumbnail.skip_non_image()
+  end
+
   test "EDelete" do
     EDelete.delete_masks_projection()
     EDelete.event_log_preserves_history()
