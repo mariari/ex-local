@@ -21,10 +21,17 @@ defmodule LocalUploadWeb.UploadController do
   end
 
   def delete(conn, %{"stored_name" => stored_name}) do
-    :ok = Uploads.delete(stored_name)
+    if conn.assigns.authenticated? do
+      :ok = Uploads.delete(stored_name)
 
-    conn
-    |> put_flash(:info, "File deleted.")
-    |> redirect(to: ~p"/")
+      conn
+      |> put_flash(:info, "File deleted.")
+      |> redirect(to: ~p"/")
+    else
+      conn
+      |> put_status(403)
+      |> text("Forbidden")
+      |> halt()
+    end
   end
 end

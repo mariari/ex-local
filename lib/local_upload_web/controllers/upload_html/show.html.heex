@@ -50,6 +50,7 @@
       </form>
 
       <form
+        :if={@authenticated?}
         method="post"
         action={~p"/uploads/#{@upload.stored_name}"}
         onsubmit="return confirm('Delete this file?')"
