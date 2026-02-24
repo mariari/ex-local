@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Dream world circle -->
+  <circle cx="100" cy="100" r="90" fill="none" stroke="#d946a8" stroke-width="1.5" opacity="0.3"/>
+  <circle cx="100" cy="100" r="70" fill="none" stroke="#d946a8" stroke-width="0.5" opacity="0.15"/>
+
+  <!-- Nexus doors — 12 small squares arranged in a circle -->
+  <g opacity="0.5">
+    <rect x="96" y="14" width="8" height="8" rx="1" fill="#d946a8"/>
+    <rect x="140" y="30" width="8" height="8" rx="1" fill="#a855c7"/>
+    <rect x="168" y="68" width="8" height="8" rx="1" fill="#38bdb8"/>
+    <rect x="172" y="112" width="8" height="8" rx="1" fill="#d946a8"/>
+    <rect x="148" y="152" width="8" height="8" rx="1" fill="#a855c7"/>
+    <rect x="112" y="174" width="8" height="8" rx="1" fill="#38bdb8"/>
+    <rect x="80" y="174" width="8" height="8" rx="1" fill="#d946a8"/>
+    <rect x="44" y="152" width="8" height="8" rx="1" fill="#a855c7"/>
+    <rect x="20" y="112" width="8" height="8" rx="1" fill="#38bdb8"/>
+    <rect x="24" y="68" width="8" height="8" rx="1" fill="#d946a8"/>
+    <rect x="52" y="30" width="8" height="8" rx="1" fill="#a855c7"/>
+    <rect x="96" y="182" width="8" height="8" rx="1" fill="#38bdb8" opacity="0"/>
+  </g>
+
+  <!-- Madotsuki — simple silhouette at center -->
+  <g transform="translate(100,100)">
+    <!-- Hair (long, dark brown/black) -->
+    <ellipse cx="0" cy="-8" rx="14" ry="16" fill="#2a1520"/>
+    <!-- Twin braids -->
+    <rect x="-14" y="-4" width="4" height="20" rx="2" fill="#2a1520"/>
+    <rect x="10" y="-4" width="4" height="20" rx="2" fill="#2a1520"/>
+    <!-- Face -->
+    <circle cx="0" cy="-8" r="9" fill="#e8c4a0"/>
+    <!-- Eyes (closed, dreaming) -->
+    <line x1="-4" y1="-9" x2="-1" y2="-9" stroke="#2a1520" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="1" y1="-9" x2="4" y2="-9" stroke="#2a1520" stroke-width="1.2" stroke-linecap="round"/>
+    <!-- Pink sweater -->
+    <rect x="-10" y="2" width="20" height="18" rx="3" fill="#d946a8"/>
+    <!-- Sweater pattern (the checkered pattern on her shirt) -->
+    <line x1="-5" y1="6" x2="5" y2="6" stroke="#c03090" stroke-width="0.8"/>
+    <line x1="-5" y1="10" x2="5" y2="10" stroke="#c03090" stroke-width="0.8"/>
+    <line x1="-5" y1="14" x2="5" y2="14" stroke="#c03090" stroke-width="0.8"/>
+    <!-- Skirt -->
+    <rect x="-8" y="20" width="16" height="8" rx="1" fill="#6b2150"/>
+  </g>
+
+  <!-- Jellyfish (top-right, dream world element) -->
+  <g transform="translate(155,55)" opacity="0.4">
+    <ellipse cx="0" cy="0" rx="6" ry="4" fill="#38bdb8"/>
+    <line x1="-3" y1="4" x2="-4" y2="12" stroke="#38bdb8" stroke-width="0.8"/>
+    <line x1="0" y1="4" x2="0" y2="13" stroke="#38bdb8" stroke-width="0.8"/>
+    <line x1="3" y1="4" x2="4" y2="12" stroke="#38bdb8" stroke-width="0.8"/>
+  </g>
+
+  <!-- Uboa eye (bottom-left) -->
+  <g transform="translate(40,145)" opacity="0.3">
+    <circle cx="0" cy="0" r="5" fill="none" stroke="#d946a8" stroke-width="1"/>
+    <circle cx="0" cy="0" r="2" fill="#d946a8"/>
+  </g>
+
+  <!-- Window/balcony motif (top, Madotsuki's room) -->
+  <g transform="translate(100,8)" opacity="0.2">
+    <rect x="-6" y="-4" width="12" height="8" rx="1" fill="none" stroke="#d946a8" stroke-width="0.8"/>
+    <line x1="0" y1="-4" x2="0" y2="4" stroke="#d946a8" stroke-width="0.5"/>
+    <line x1="-6" y1="0" x2="6" y2="0" stroke="#d946a8" stroke-width="0.5"/>
+  </g>
+</svg>
