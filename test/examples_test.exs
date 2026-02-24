@@ -39,6 +39,14 @@ defmodule ExamplesTest do
     EEventStore.replay_rebuilds()
   end
 
+  test "EContentType" do
+    EContentType.detect_gif()
+    EContentType.detect_jpeg()
+    EContentType.detect_png()
+    EContentType.fallback_for_unknown()
+    EContentType.override_in_upload()
+  end
+
   test "EDelete" do
     EDelete.delete_masks_projection()
     EDelete.event_log_preserves_history()
