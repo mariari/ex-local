@@ -40,7 +40,7 @@
             <td class="font-mono">{idx}</td>
             <td>
               <a
-                href={~p"/uploads/#{upload.id}"}
+                href={~p"/uploads/#{upload.stored_name}"}
                 class="link link-primary flex items-center gap-2"
               >
                 <img
@@ -85,7 +85,7 @@
           <tr :for={upload <- @recent_uploads}>
             <td>
               <a
-                href={~p"/uploads/#{upload.id}"}
+                href={~p"/uploads/#{upload.stored_name}"}
                 class="link link-primary flex items-center gap-2"
               >
                 <img

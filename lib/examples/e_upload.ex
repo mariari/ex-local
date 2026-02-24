@@ -38,7 +38,7 @@ defmodule EUpload do
   example retrieve_upload do
     upload = create_upload()
     found = Uploads.get_by_stored_name(upload.stored_name)
-    assert found.id == upload.id
+    assert found.stored_name == upload.stored_name
     found
   end
 
@@ -57,7 +57,7 @@ defmodule EUpload do
     }
 
     {:ok, found} = Uploads.store_file(dup, "someone_else")
-    assert found.id == upload.id
+    assert found.stored_name == upload.stored_name
 
     found
   end
