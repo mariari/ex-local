@@ -62,4 +62,17 @@
 /* Make LiveView wrapper divs transparent for layout */
 [data-phx-session], [data-phx-teleported-src] { display: contents }
 
-/* This file is for your main application CSS */
+/* Dream-world background from ynoproject — stretched to fill */
+body {
+  background-image: url("/images/bg.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* Crisp pixel art — no blurry upscaling */
+.pixel-art {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
