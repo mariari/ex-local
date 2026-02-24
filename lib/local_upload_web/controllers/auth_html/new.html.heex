@@ -1,0 +1,24 @@
+<Layouts.flash_group flash={@flash} />
+
+<div class="px-4 py-10 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-sm">
+    <h1 class="text-2xl font-bold mb-6">Admin Login</h1>
+
+    <form method="post" action={~p"/auth"}>
+      <input type="hidden" name="_csrf_token" value={Plug.CSRFProtection.get_csrf_token()} />
+      <div class="form-control mb-4">
+        <label class="label">
+          <span class="label-text">Secret</span>
+        </label>
+        <input
+          type="password"
+          name="secret"
+          required
+          class="input input-bordered w-full"
+          placeholder="Enter upload secret"
+        />
+      </div>
+      <button type="submit" class="btn btn-primary w-full">Login</button>
+    </form>
+  </div>
+</div>
