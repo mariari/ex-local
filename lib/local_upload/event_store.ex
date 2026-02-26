@@ -6,7 +6,6 @@ defmodule LocalUpload.EventStore do
   held in ETS by ProjectionStore.
   """
 
-  import Ecto.Query
   alias LocalUpload.Repo
   alias LocalUpload.EventStore.Event
   alias LocalUpload.ProjectionStore
@@ -35,13 +34,4 @@ defmodule LocalUpload.EventStore do
   @doc "I rebuild all projections by replaying every event in order."
   @spec replay() :: :ok
   def replay, do: ProjectionStore.rebuild()
-
-  @doc "I return all events for a given aggregate, ordered by time."
-  @spec stream(integer()) :: [Event.t()]
-  def stream(aggregate_id) do
-    Event
-    |> where([e], e.aggregate_id == ^aggregate_id)
-    |> order_by([e], asc: e.id)
-    |> Repo.all()
-  end
 end

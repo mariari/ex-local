@@ -21,8 +21,7 @@ config :local_upload, LocalUploadWeb.Endpoint,
     formats: [html: LocalUploadWeb.ErrorHTML, json: LocalUploadWeb.ErrorJSON],
     layout: false
   ],
-  pubsub_server: LocalUpload.PubSub,
-  live_view: [signing_salt: "tsjwy1vF"]
+  pubsub_server: LocalUpload.PubSub
 
 # Configure esbuild (the version is required)
 config :esbuild,
