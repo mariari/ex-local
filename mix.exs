@@ -67,7 +67,7 @@ defmodule LocalUpload.MixProject do
       {:typed_struct, "~> 0.3", override: true},
       {:ex_example, "~> 0.1.1"},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
-      {:gt_bridge, git: "https://github.com/mariari/ElixirGtBridge.git", tag: "v0.9.0"}
+      {:gt_bridge, "~> 0.10.0"}
     ]
   end
 
