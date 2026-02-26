@@ -149,7 +149,8 @@ defmodule LocalUpload.Uploads do
       :crypto.strong_rand_bytes(4)
       |> Base.url_encode64(padding: false)
 
-    slug <> ext
+    name = slug <> ext
+    if get_by_stored_name(name), do: generate_stored_name(original_name), else: name
   end
 
   @spec compute_hash(Path.t()) :: String.t()
