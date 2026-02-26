@@ -11,10 +11,14 @@ defmodule LocalUploadWeb.Plugs.IPHash do
 
   @doc false
   def call(conn, _opts) do
+    ip_string =
+      case get_req_header(conn, "x-real-ip") do
+        [real_ip | _] -> real_ip
+        [] -> conn.remote_ip |> :inet.ntoa() |> to_string()
+      end
+
     hash =
-      conn.remote_ip
-      |> :inet.ntoa()
-      |> to_string()
+      ip_string
       |> then(&:crypto.hash(:sha256, &1))
       |> Base.encode16(case: :lower)
       |> binary_part(0, 16)
