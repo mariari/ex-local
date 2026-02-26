@@ -14,7 +14,11 @@ defmodule LocalUploadWeb.FileController do
       path = Uploads.file_path(name)
 
       if File.exists?(path) do
-        content_type = MIME.from_path(name)
+        content_type =
+          case Uploads.get_by_stored_name(name) do
+            %{content_type: ct} -> ct
+            nil -> MIME.from_path(name)
+          end
 
         conn
         |> put_resp_content_type(content_type)
