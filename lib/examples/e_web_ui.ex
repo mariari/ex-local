@@ -50,6 +50,7 @@ defmodule EWebUI do
 
     conn =
       build_conn()
+      |> Plug.Test.init_test_session(%{authenticated: true})
       |> Phoenix.ConnTest.get("/uploads/#{upload.stored_name}")
 
     assert conn.status == 200
@@ -64,6 +65,7 @@ defmodule EWebUI do
   @spec vote_via_http() :: Plug.Conn.t()
   example vote_via_http do
     upload = EUpload.create_upload()
+    before = Uploads.get!(upload.stored_name).vote_count
 
     # vote
     vote_conn =
@@ -75,7 +77,7 @@ defmodule EWebUI do
 
     # verify count incremented
     refreshed = Uploads.get!(upload.stored_name)
-    assert refreshed.vote_count == 1
+    assert refreshed.vote_count == before + 1
 
     # voting again from same IP is idempotent
     vote_conn2 =
@@ -85,8 +87,8 @@ defmodule EWebUI do
 
     assert vote_conn2.status == 302
 
-    still_one = Uploads.get!(upload.stored_name)
-    assert still_one.vote_count == 1
+    after_dup = Uploads.get!(upload.stored_name)
+    assert after_dup.vote_count == before + 1
 
     vote_conn
   end
