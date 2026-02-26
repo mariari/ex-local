@@ -15,9 +15,9 @@ defmodule LocalUpload.Uploads.Upload do
     field :inserted_at, DateTime.t()
   end
 
-  @doc "I build an Upload from event data."
-  @spec new(map()) :: t()
-  def new(data) do
+  @doc "I build an Upload from event data, using the event's timestamp."
+  @spec new(map(), DateTime.t()) :: t()
+  def new(data, inserted_at) do
     %__MODULE__{
       stored_name: data["stored_name"],
       original_name: data["original_name"],
@@ -25,7 +25,7 @@ defmodule LocalUpload.Uploads.Upload do
       size: data["size"],
       content_type: data["content_type"],
       uploader: data["uploader"] || "anonymous",
-      inserted_at: DateTime.utc_now()
+      inserted_at: inserted_at
     }
   end
 end

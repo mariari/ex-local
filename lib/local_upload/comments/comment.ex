@@ -16,15 +16,15 @@ defmodule LocalUpload.Comments.Comment do
   end
 
   @doc "I build a Comment from event data. mono_id is the event's DB id."
-  @spec new(map(), integer()) :: t()
-  def new(data, event_id) do
+  @spec new(map(), integer(), DateTime.t()) :: t()
+  def new(data, event_id, inserted_at) do
     %__MODULE__{
       stored_name: data["stored_name"],
       body: data["body"],
       author_name: data["author_name"] || "Anonymous",
       ip_hash: data["ip_hash"],
       mono_id: event_id,
-      inserted_at: DateTime.utc_now()
+      inserted_at: inserted_at
     }
   end
 end

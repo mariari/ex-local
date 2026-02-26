@@ -97,14 +97,14 @@ defmodule LocalUpload.ProjectionStore do
   ############################################################
 
   @spec do_project(Event.t()) :: term()
-  defp do_project(%Event{type: "file_uploaded", data: data}) do
-    upload = Upload.new(data)
+  defp do_project(%Event{type: "file_uploaded", data: data, inserted_at: ts}) do
+    upload = Upload.new(data, ts)
     :ets.insert(@uploads, {upload.stored_name, upload})
     upload
   end
 
-  defp do_project(%Event{type: "comment_added", data: data, id: event_id}) do
-    comment = Comment.new(data, event_id)
+  defp do_project(%Event{type: "comment_added", data: data, id: event_id, inserted_at: ts}) do
+    comment = Comment.new(data, event_id, ts)
     :ets.insert(@comments, {{comment.stored_name, comment.mono_id}, comment})
     comment
   end
