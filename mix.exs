@@ -63,7 +63,8 @@ defmodule LocalUpload.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.5"},
-      {:typedstruct, "~> 0.5"},
+      # typed_struct is pulled in by ex_example and provides TypedStruct
+      {:typed_struct, "~> 0.3", override: true},
       {:ex_example, "~> 0.1.1"},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
     ]
