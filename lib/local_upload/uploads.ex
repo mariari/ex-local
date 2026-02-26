@@ -65,12 +65,10 @@ defmodule LocalUpload.Uploads do
     |> Enum.take(limit)
   end
 
-  @doc "I delete an upload — shred the file, then record the event."
+  @doc "I delete an upload — record the event, then shred the file."
   @spec delete(String.t()) :: :ok
   def delete(stored_name) do
     upload = get!(stored_name)
-    shred_file(stored_name)
-    if upload.thumb_name, do: shred_file(upload.thumb_name)
 
     {:ok, _} =
       EventStore.append(%{
@@ -78,6 +76,8 @@ defmodule LocalUpload.Uploads do
         data: %{"stored_name" => stored_name}
       })
 
+    shred_file(stored_name)
+    if upload.thumb_name, do: shred_file(upload.thumb_name)
     :ok
   end
 
