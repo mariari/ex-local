@@ -58,7 +58,7 @@
                 {upload.original_name}
               </a>
             </td>
-            <td>{upload.uploader}</td>
+            <td>{display_uploader(upload.uploader, @authenticated?)}</td>
             <td class="font-mono">+{upload.vote_count}</td>
           </tr>
         </tbody>
@@ -97,7 +97,7 @@
                 {upload.original_name}
               </a>
             </td>
-            <td>{upload.uploader}</td>
+            <td>{display_uploader(upload.uploader, @authenticated?)}</td>
             <td class="font-mono">{format_bytes(upload.size)}</td>
             <td>{Calendar.strftime(upload.inserted_at, "%Y-%m-%d %H:%M")}</td>
           </tr>
