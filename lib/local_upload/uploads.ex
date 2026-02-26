@@ -29,8 +29,7 @@ defmodule LocalUpload.Uploads do
         stored_name: stored_name,
         hash: hash,
         size: size,
-        content_type:
-          plug_upload.content_type || "application/octet-stream",
+        content_type: plug_upload.content_type || "application/octet-stream",
         uploader: uploader
       })
       |> Repo.insert()
@@ -91,7 +90,8 @@ defmodule LocalUpload.Uploads do
       :crypto.strong_rand_bytes(4)
       |> Base.url_encode64(padding: false)
 
-    slug <> ext
+    name = slug <> ext
+    if get_by_stored_name(name), do: generate_stored_name(original_name), else: name
   end
 
   defp compute_hash(path) do
