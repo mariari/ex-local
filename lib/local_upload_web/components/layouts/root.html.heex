@@ -11,7 +11,7 @@
     <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
     </script>
   </head>
-  <body>
+  <body class="min-h-screen">
     <nav class="flex justify-end gap-4 px-4 py-2 text-sm text-base-content/60">
       <%= if assigns[:authenticated?] do %>
         <form method="post" action={~p"/auth"} class="inline">
