@@ -22,6 +22,10 @@ if secret = System.get_env("UPLOAD_SECRET") do
   config :local_upload, upload_secret: secret
 end
 
+if upload_dir = System.get_env("UPLOAD_DIR") do
+  config :local_upload, upload_dir: upload_dir
+end
+
 if System.get_env("PHX_SERVER") do
   config :local_upload, LocalUploadWeb.Endpoint, server: true
 end
