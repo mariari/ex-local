@@ -11,6 +11,7 @@ defmodule LocalUpload.Uploads.Upload do
     field :content_type, String.t(), enforce: true
     field :uploader, String.t(), default: "anonymous"
     field :vote_count, integer(), default: 0
+    field :thumb_name, String.t()
     field :inserted_at, DateTime.t()
   end
 

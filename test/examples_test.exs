@@ -47,6 +47,11 @@ defmodule ExamplesTest do
     EContentType.override_in_upload()
   end
 
+  test "EThumbnail" do
+    EThumbnail.generate_thumbnail()
+    EThumbnail.skip_non_image()
+  end
+
   test "EDelete" do
     EDelete.delete_masks_projection()
     EDelete.event_log_preserves_history()
