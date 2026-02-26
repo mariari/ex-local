@@ -6,6 +6,7 @@ defmodule LocalUpload.Uploads do
   """
 
   alias LocalUpload.Uploads.Upload
+  alias LocalUpload.ContentType
   alias LocalUpload.EventStore
   alias LocalUpload.ProjectionStore
 
@@ -100,6 +101,12 @@ defmodule LocalUpload.Uploads do
     size = File.stat!(plug_upload.path).size
 
     with :ok <- File.cp(plug_upload.path, dest) do
+      content_type =
+        ContentType.detect(
+          dest,
+          plug_upload.content_type || "application/octet-stream"
+        )
+
       case EventStore.append(%{
              type: "file_uploaded",
              data: %{
@@ -107,7 +114,7 @@ defmodule LocalUpload.Uploads do
                "stored_name" => stored_name,
                "hash" => hash,
                "size" => size,
-               "content_type" => plug_upload.content_type || "application/octet-stream",
+               "content_type" => content_type,
                "uploader" => uploader
              }
            }) do
