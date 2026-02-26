@@ -82,8 +82,8 @@ defmodule LocalUpload.ProjectionStore do
   def handle_call({:project, %Event{id: id}}, _from, %{wm: wm} = s) when id <= wm,
     do: {:reply, :already_projected, s}
 
-  def handle_call({:project, event}, _from, state),
-    do: {:reply, do_project(event), state}
+  def handle_call({:project, %Event{id: id} = event}, _from, state),
+    do: {:reply, do_project(event), %{state | wm: id}}
 
   def handle_call(:rebuild, _from, state) do
     :ets.delete_all_objects(@uploads)
