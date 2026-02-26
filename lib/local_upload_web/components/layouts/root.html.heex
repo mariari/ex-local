@@ -13,6 +13,7 @@
   </head>
   <body class="min-h-screen">
     <nav class="flex justify-end gap-4 px-4 py-2 text-sm text-base-content/60">
+      <a href={~p"/admin"} class="link link-hover">Admin</a>
       <%= if assigns[:authenticated?] do %>
         <form method="post" action={~p"/auth"} class="inline">
           <input type="hidden" name="_method" value="delete" />
@@ -20,7 +21,7 @@
           <button type="submit" class="link link-hover">Logout</button>
         </form>
       <% else %>
-        <a href={~p"/auth"} class="link link-hover">Admin</a>
+        <a href={~p"/auth"} class="link link-hover">Login</a>
       <% end %>
     </nav>
     {@inner_content}

@@ -33,6 +33,7 @@ defmodule LocalUploadWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/admin", AdminController, :index
     get "/auth", AuthController, :new
     post "/auth", AuthController, :create
     delete "/auth", AuthController, :delete

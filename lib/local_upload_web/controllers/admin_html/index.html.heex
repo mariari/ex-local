@@ -1,0 +1,81 @@
+<Layouts.flash_group flash={@flash} />
+
+<div class="px-4 py-10 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-5xl">
+    <h1 class="text-3xl font-bold mb-6">Admin Dashboard</h1>
+
+    <%!-- Stats bar --%>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+      <div class="card bg-base-200">
+        <div class="card-body p-4">
+          <div class="text-sm text-base-content/60">Total Files</div>
+          <div class="text-2xl font-bold">{@stats.total_files}</div>
+        </div>
+      </div>
+      <div class="card bg-base-200">
+        <div class="card-body p-4">
+          <div class="text-sm text-base-content/60">Disk Usage</div>
+          <div class="text-2xl font-bold">{format_bytes(@stats.total_size)}</div>
+        </div>
+      </div>
+      <div class="card bg-base-200">
+        <div class="card-body p-4">
+          <div class="text-sm text-base-content/60">This Week</div>
+          <div class="text-2xl font-bold">{@stats.uploads_this_week}</div>
+        </div>
+      </div>
+      <div class="card bg-base-200">
+        <div class="card-body p-4">
+          <div class="text-sm text-base-content/60">Total Events</div>
+          <div class="text-2xl font-bold">{@stats.total_events}</div>
+        </div>
+      </div>
+      <div class="card bg-base-200">
+        <div class="card-body p-4">
+          <div class="text-sm text-base-content/60">Top Uploaders</div>
+          <div class="text-sm">
+            <div :for={{name, count} <- @stats.top_uploaders}>
+              {name} ({count})
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%!-- Upload collage --%>
+    <h2 class="text-xl font-semibold mb-4">Recent Uploads</h2>
+
+    <div :if={@uploads == []} class="text-base-content/50">
+      <p>No uploads yet.</p>
+    </div>
+
+    <div
+      :if={@uploads != []}
+      class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2"
+    >
+      <a
+        :for={upload <- @uploads}
+        href={~p"/uploads/#{upload.stored_name}"}
+        class="aspect-square bg-base-200 rounded overflow-hidden flex items-center justify-center"
+      >
+        <img
+          :if={String.starts_with?(upload.content_type, "image/")}
+          src={~p"/f/#{upload.stored_name}"}
+          alt={upload.original_name}
+          class="w-full h-full object-cover"
+        />
+        <span
+          :if={!String.starts_with?(upload.content_type, "image/")}
+          class="text-center text-base-content/60"
+        >
+          <span class="text-2xl block">{file_icon(upload.content_type)}</span>
+          <span class="text-xs">{Path.extname(upload.original_name)}</span>
+        </span>
+      </a>
+    </div>
+
+    <div class="mt-6">
+      <a href={~p"/"} class="btn btn-outline btn-sm">Back to Home</a>
+    </div>
+  </div>
+</div>

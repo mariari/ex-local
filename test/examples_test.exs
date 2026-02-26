@@ -81,6 +81,12 @@ defmodule ExamplesTest do
   end
 
   @tag :http
+  test "EAdmin" do
+    EAdmin.admin_rejects_unauthenticated()
+    EAdmin.admin_shows_stats()
+  end
+
+  @tag :http
   test "ESecret" do
     ESecret.secret_rejects_bad_request()
     ESecret.secret_accepts_good_request()
