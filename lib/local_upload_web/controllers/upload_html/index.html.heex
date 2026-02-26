@@ -27,21 +27,15 @@
                 class="link link-primary flex items-center gap-2"
               >
                 <img
-                  :if={String.starts_with?(upload.content_type || "", "image/")}
-                  src={~p"/f/#{upload.stored_name}"}
+                  :if={upload.thumb_name}
+                  src={~p"/f/#{upload.thumb_name}"}
                   alt={upload.original_name}
                   class="w-10 h-10 object-cover rounded"
                 />
-                <span
-                  :if={String.starts_with?(upload.content_type || "", "video/")}
-                  class="w-10 h-10 flex items-center justify-center bg-base-200 rounded text-lg"
-                >
-                  &#9654;
-                </span>
                 {upload.original_name}
               </a>
             </td>
-            <td>{upload.uploader}</td>
+            <td>{display_uploader(upload.uploader, @authenticated?)}</td>
             <td class="font-mono">{format_bytes(upload.size)}</td>
             <td class="font-mono">+{upload.vote_count}</td>
             <td>{Calendar.strftime(upload.inserted_at, "%Y-%m-%d %H:%M")}</td>

@@ -96,6 +96,7 @@ defmodule LocalUpload.ProjectionStore do
   #                   Private Implementation                 #
   ############################################################
 
+  @spec do_project(Event.t()) :: term()
   defp do_project(%Event{type: "file_uploaded", data: data}) do
     upload = Upload.new(data)
     :ets.insert(@uploads, {upload.stored_name, upload})
@@ -106,6 +107,16 @@ defmodule LocalUpload.ProjectionStore do
     comment = Comment.new(data, event_id)
     :ets.insert(@comments, {{comment.stored_name, comment.mono_id}, comment})
     comment
+  end
+
+  defp do_project(%Event{type: "thumbnail_generated", data: data}) do
+    case :ets.lookup(@uploads, data["stored_name"]) do
+      [{k, upload}] ->
+        :ets.insert(@uploads, {k, %{upload | thumb_name: data["thumb_name"]}})
+
+      [] ->
+        :ok
+    end
   end
 
   defp do_project(%Event{type: "file_deleted", data: data}) do
@@ -136,6 +147,7 @@ defmodule LocalUpload.ProjectionStore do
     end
   end
 
+  @spec do_replay() :: non_neg_integer()
   defp do_replay do
     import Ecto.Query
 

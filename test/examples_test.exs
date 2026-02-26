@@ -47,6 +47,11 @@ defmodule ExamplesTest do
     EContentType.override_in_upload()
   end
 
+  test "EThumbnail" do
+    EThumbnail.generate_thumbnail()
+    EThumbnail.skip_non_image()
+  end
+
   test "EDelete" do
     EDelete.delete_masks_projection()
     EDelete.event_log_preserves_history()
@@ -73,6 +78,12 @@ defmodule ExamplesTest do
     EPomfRoundTrip.upload_and_download()
     EPomfRoundTrip.file_not_found()
     EPomfRoundTrip.path_traversal_blocked()
+  end
+
+  @tag :http
+  test "EAdmin" do
+    EAdmin.admin_rejects_unauthenticated()
+    EAdmin.admin_shows_stats()
   end
 
   @tag :http

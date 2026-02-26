@@ -22,6 +22,10 @@ if secret = System.get_env("UPLOAD_SECRET") do
   config :local_upload, upload_secret: secret
 end
 
+if upload_dir = System.get_env("UPLOAD_DIR") do
+  config :local_upload, upload_dir: upload_dir
+end
+
 if System.get_env("PHX_SERVER") do
   config :local_upload, LocalUploadWeb.Endpoint, server: true
 end
@@ -52,8 +56,6 @@ if config_env() == :prod do
 
   host = System.get_env("PHX_HOST") || "example.com"
   port = String.to_integer(System.get_env("PORT") || "4000")
-
-  config :local_upload, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
   config :local_upload, LocalUploadWeb.Endpoint,
     url: [host: host, port: 443, scheme: "https"],

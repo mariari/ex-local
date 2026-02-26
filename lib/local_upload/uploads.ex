@@ -9,6 +9,7 @@ defmodule LocalUpload.Uploads do
   alias LocalUpload.ContentType
   alias LocalUpload.EventStore
   alias LocalUpload.ProjectionStore
+  alias LocalUpload.Thumbnails
 
   ############################################################
   #                        Public API                        #
@@ -67,8 +68,9 @@ defmodule LocalUpload.Uploads do
   @doc "I delete an upload — shred the file, then record the event."
   @spec delete(String.t()) :: :ok
   def delete(stored_name) do
-    _upload = get!(stored_name)
+    upload = get!(stored_name)
     shred_file(stored_name)
+    if upload.thumb_name, do: shred_file(upload.thumb_name)
 
     {:ok, _} =
       EventStore.append(%{
@@ -118,8 +120,12 @@ defmodule LocalUpload.Uploads do
                "uploader" => uploader
              }
            }) do
-        {:ok, {_event, upload}} -> {:ok, upload}
-        {:error, changeset} -> {:error, changeset}
+        {:ok, {_event, upload}} ->
+          Thumbnails.generate(upload)
+          {:ok, upload}
+
+        {:error, changeset} ->
+          {:error, changeset}
       end
     end
   end

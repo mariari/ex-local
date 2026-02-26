@@ -13,9 +13,15 @@
         alt="Madotsuki"
         class="pixel-art w-24 h-24 mb-4"
       />
-      <h1 class="text-3xl font-bold mb-2 text-primary">Local Upload</h1>
-      <p class="text-base-content/50">
-        Dream it, vomit it.
+      <h1 class="text-2xl font-bold mb-2 text-primary dream-blink">
+        <span>║</span><span>▒</span><span>░</span>
+        <span>║</span><span>▒</span><span>░</span>
+        <span class="mx-1">Local Upload</span>
+        <span>░</span><span>▒</span><span>║</span>
+        <span>░</span><span>▒</span><span>║</span>
+      </h1>
+      <p class="text-2xl text-primary/70">
+        駄目
       </p>
     </div>
 
@@ -44,21 +50,15 @@
                 class="link link-primary flex items-center gap-2"
               >
                 <img
-                  :if={String.starts_with?(upload.content_type || "", "image/")}
-                  src={~p"/f/#{upload.stored_name}"}
+                  :if={upload.thumb_name}
+                  src={~p"/f/#{upload.thumb_name}"}
                   alt={upload.original_name}
                   class="w-10 h-10 object-cover rounded"
                 />
-                <span
-                  :if={String.starts_with?(upload.content_type || "", "video/")}
-                  class="w-10 h-10 flex items-center justify-center bg-base-200 rounded text-lg"
-                >
-                  &#9654;
-                </span>
                 {upload.original_name}
               </a>
             </td>
-            <td>{upload.uploader}</td>
+            <td>{display_uploader(upload.uploader, @authenticated?)}</td>
             <td class="font-mono">+{upload.vote_count}</td>
           </tr>
         </tbody>
@@ -89,21 +89,15 @@
                 class="link link-primary flex items-center gap-2"
               >
                 <img
-                  :if={String.starts_with?(upload.content_type || "", "image/")}
-                  src={~p"/f/#{upload.stored_name}"}
+                  :if={upload.thumb_name}
+                  src={~p"/f/#{upload.thumb_name}"}
                   alt={upload.original_name}
                   class="w-10 h-10 object-cover rounded"
                 />
-                <span
-                  :if={String.starts_with?(upload.content_type || "", "video/")}
-                  class="w-10 h-10 flex items-center justify-center bg-base-200 rounded text-lg"
-                >
-                  &#9654;
-                </span>
                 {upload.original_name}
               </a>
             </td>
-            <td>{upload.uploader}</td>
+            <td>{display_uploader(upload.uploader, @authenticated?)}</td>
             <td class="font-mono">{format_bytes(upload.size)}</td>
             <td>{Calendar.strftime(upload.inserted_at, "%Y-%m-%d %H:%M")}</td>
           </tr>

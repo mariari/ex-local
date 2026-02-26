@@ -35,6 +35,7 @@ defmodule LocalUploadWeb.AuthController do
     |> redirect(to: ~p"/")
   end
 
+  @spec check_secret(String.t()) :: :ok | :unauthorized
   defp check_secret(secret) do
     case Application.get_env(:local_upload, :upload_secret) do
       nil -> :ok

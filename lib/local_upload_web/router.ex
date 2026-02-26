@@ -4,7 +4,7 @@ defmodule LocalUploadWeb.Router do
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
-    plug :fetch_live_flash
+    plug :fetch_flash
     plug :put_root_layout, html: {LocalUploadWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
@@ -33,6 +33,7 @@ defmodule LocalUploadWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/admin", AdminController, :index
     get "/auth", AuthController, :new
     post "/auth", AuthController, :create
     delete "/auth", AuthController, :delete

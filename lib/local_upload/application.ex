@@ -18,11 +18,6 @@ defmodule LocalUpload.Application do
       {Ecto.Migrator,
        repos: Application.fetch_env!(:local_upload, :ecto_repos), skip: skip_migrations?()},
       LocalUpload.ProjectionStore,
-      {DNSCluster, query: Application.get_env(:local_upload, :dns_cluster_query) || :ignore},
-      {Phoenix.PubSub, name: LocalUpload.PubSub},
-      # Start a worker by calling: LocalUpload.Worker.start_link(arg)
-      # {LocalUpload.Worker, arg},
-      # Start to serve requests, typically the last entry
       LocalUploadWeb.Endpoint
     ]
 

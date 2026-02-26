@@ -4,7 +4,7 @@ defmodule LocalUpload.MixProject do
   def project do
     [
       app: :local_upload,
-      version: "0.3.0",
+      version: "0.4.0",
       elixir: "~> 1.15",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -63,7 +63,8 @@ defmodule LocalUpload.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.5"},
-      {:typedstruct, "~> 0.5"},
+      # typed_struct is pulled in by ex_example and provides TypedStruct
+      {:typed_struct, "~> 0.3", override: true},
       {:ex_example, "~> 0.1.1"},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
     ]
