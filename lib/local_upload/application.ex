@@ -24,7 +24,21 @@ defmodule LocalUpload.Application do
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: LocalUpload.Supervisor]
-    Supervisor.start_link(children, opts)
+    result = Supervisor.start_link(children, opts)
+    register_gt_views()
+    result
+  end
+
+  # TODO: fix upstream — GtBridge should scan loaded modules for
+  # __views__/0 at application start so this isn't needed.
+  defp register_gt_views do
+    for module <- [
+          LocalUpload.Uploads.Upload,
+          LocalUpload.Comments.Comment,
+          LocalUpload.EventStore.Event
+        ] do
+      GtBridge.View.register(module)
+    end
   end
 
   # Tell Phoenix to update the endpoint configuration
