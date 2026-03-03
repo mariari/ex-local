@@ -16,7 +16,7 @@
     <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
     </script>
   </head>
-  <body class="min-h-screen">
+  <body id="top" class="min-h-screen">
     <nav class="flex justify-end gap-4 px-4 py-2 text-sm text-base-content/60">
       <a href={~p"/admin"} class="link link-hover">Admin</a>
       <%= if assigns[:authenticated?] do %>
@@ -30,5 +30,8 @@
       <% end %>
     </nav>
     {@inner_content}
+    <footer class="flex justify-center py-4 text-sm text-base-content/60">
+      <a href="#top" class="link link-hover">Home ↑</a>
+    </footer>
   </body>
 </html>
