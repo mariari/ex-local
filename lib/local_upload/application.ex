@@ -18,6 +18,7 @@ defmodule LocalUpload.Application do
       {Ecto.Migrator,
        repos: Application.fetch_env!(:local_upload, :ecto_repos), skip: skip_migrations?()},
       LocalUpload.ProjectionStore,
+      {Phoenix.PubSub, name: LocalUpload.PubSub},
       LocalUploadWeb.Endpoint
     ]
 
