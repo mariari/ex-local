@@ -5,8 +5,8 @@
     <h1 class="text-2xl font-bold mb-2">{@upload.original_name}</h1>
     <p class="text-base-content/60 mb-6">
       Vomited by <strong>{display_uploader(@upload.uploader, @authenticated?)}</strong>
-      on {Calendar.strftime(@upload.inserted_at, "%Y-%m-%d %H:%M")}
-      · <a href={~p"/"} class="link link-primary link-hover">Back to Home</a>
+      on {Calendar.strftime(@upload.inserted_at, "%Y-%m-%d %H:%M")} ·
+      <a href={~p"/"} class="link link-primary link-hover">Back to Home</a>
     </p>
 
     <%!-- File display --%>
@@ -122,6 +122,5 @@
         </form>
       </div>
     </div>
-
   </div>
 </div>
