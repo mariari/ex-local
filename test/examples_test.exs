@@ -45,3 +45,7 @@ end
 defmodule ESecretTest do
   use ExExample.ExUnit, for: ESecret
 end
+
+defmodule ELifecycleTest do
+  use ExExample.ExUnit, for: ELifecycle
+end
